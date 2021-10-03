@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/cart.dart';
+import '../providers/product.dart';
 import '../screens/product_detail_screen.dart';
-import '../models/product.dart';
 
 class ProductItem extends StatelessWidget {
-  final String id;
-  final String title;
-  final String imageUrl;
-  const ProductItem({
-    required this.id,
-    required this.title,
-    required this.imageUrl,
-  });
+  const ProductItem({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final Product product = Provider.of<Product>(context, listen: false);
+    final cart = Provider.of<Cart>(context, listen: false);
     return ClipRRect(
       borderRadius: BorderRadius.circular(12.0),
       child: GridTile(
@@ -21,11 +18,11 @@ class ProductItem extends StatelessWidget {
           onTap: () {
             Navigator.of(context).pushNamed(
               ProductDetailScreen.routeName,
-              arguments: id,
+              arguments: product.id,
             );
           },
           child: Image.network(
-            imageUrl,
+            product.imageUrl,
             fit: BoxFit.cover,
           ),
         ),
@@ -41,30 +38,38 @@ class ProductItem extends StatelessWidget {
                 ),
               ),
               child: Text(
-                '\$ $title',
+                '\$ ${product.price}',
               ),
             ),
           ],
         ),
         footer: GridTileBar(
           title: Text(
-            title,
+            product.title,
             textAlign: TextAlign.center,
           ),
           backgroundColor: Colors.black87,
-          leading: IconButton(
-            icon: Icon(
-              Icons.favorite,
-              color: Theme.of(context).colorScheme.secondary,
+          leading: Consumer<Product>(
+            builder: (ctx, product, _) => IconButton(
+              icon: Icon(
+                product.isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+              onPressed: () => product.toggleFavorite(),
             ),
-            onPressed: () {},
           ),
           trailing: IconButton(
             icon: Icon(
               Icons.shopping_cart,
               color: Theme.of(context).colorScheme.secondary,
             ),
-            onPressed: () {},
+            onPressed: () {
+              cart.addItem(
+                product.id,
+                product.price,
+                product.title,
+              );
+            },
           ),
         ),
       ),
