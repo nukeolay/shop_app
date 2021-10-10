@@ -4,7 +4,6 @@ import '../providers/product.dart';
 import '../providers/products.dart';
 
 class ProductDetailScreen extends StatelessWidget {
-  //ProductDetailScreen();
   static const String routeName = '/detail-screen';
 
   const ProductDetailScreen({Key? key}) : super(key: key);
@@ -37,7 +36,7 @@ class ProductDetailScreen extends StatelessWidget {
                 fontSize: 20,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Container(
