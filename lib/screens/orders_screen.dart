@@ -7,6 +7,7 @@ import '../providers/orders.dart';
 class OrdersScreen extends StatelessWidget {
   const OrdersScreen({Key? key}) : super(key: key);
   static const String routeName = '/orders';
+  final bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
