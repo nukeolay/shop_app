@@ -22,19 +22,20 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  Future<void> toggleFavorite() async {
+  Future<void> toggleFavorite(String? authToken, String? userId) async {
     final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
-    final Uri url = Uri.https('shop-app-demo-udemy-default-rtdb.firebaseio.com',
-        '/products/$id.json');
+    final Uri url = Uri.https(
+      'shop-app-demo-udemy-default-rtdb.firebaseio.com',
+      '/userFavorites/$userId/$id.json',
+      {'auth': authToken},
+    );
     try {
-      await http.patch(
+      await http.put(
         url,
         body: jsonEncode(
-          {
-            'isFavorite': isFavorite,
-          },
+          isFavorite,
         ),
       );
     } catch (error) {

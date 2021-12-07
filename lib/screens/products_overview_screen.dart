@@ -13,6 +13,7 @@ enum FilterOptions {
 }
 
 class ProductsOverviewScreen extends StatefulWidget {
+  static String routeName = '/products-overview-screen';
   const ProductsOverviewScreen({Key? key}) : super(key: key);
 
   @override
@@ -21,28 +22,20 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   bool _showOnlyFavorites = false;
-  bool _isInit = true;
+
   bool _isLoading = false;
 
   @override
   void initState() {
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
+    setState(() {
+      _isLoading = true;
+    });
+    Provider.of<Products>(context, listen: false).fetchAndSetProducts().then((_) {
       setState(() {
-        _isLoading = true;
+        _isLoading = false;
       });
-      Provider.of<Products>(context).fetchAndSetProducts().then((_) {
-        setState(() {
-          _isLoading = false;
-        });
-      });
-    }
-    _isInit = false;
-    super.didChangeDependencies();
+    });
+    super.initState();
   }
 
   @override
