@@ -39,7 +39,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
             return const Center(child: CircularProgressIndicator());
           } else {
             if (snapshot.error != null) {
-              print('ERROR!!!!!!!: ${snapshot.error}');
               return const Center(
                 child: Text('Error'),
               );
