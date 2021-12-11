@@ -10,108 +10,151 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Product product = Provider.of<Product>(context, listen: false);
-    final cart = Provider.of<Cart>(context, listen: false);
+    final product = Provider.of<Product>(context, listen: false);
+    //final cart = Provider.of<Cart>(context, listen: false);
     final auth = Provider.of<Auth>(context, listen: false);
     final scaffold = ScaffoldMessenger.of(context);
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12.0),
-      child: GridTile(
-        child: GestureDetector(
-          onTap: () {
-            Navigator.of(context).pushNamed(
-              ProductDetailScreen.routeName,
-              arguments: product.id,
-            );
-          },
-          child: Hero(
-            tag: product.id,
-            child: FadeInImage(
-              placeholder: const AssetImage('assets/images/placeholder.jpg'),
-              image: NetworkImage(
-                product.imageUrl,
-              ),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        header: Wrap(
+    return LayoutBuilder(
+      builder: (ctx, constraints) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.all(8.0),
-              decoration: BoxDecoration(
-                color: Theme.of(context).cursorColor.withOpacity(0.7),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(12.0),
-                  bottomRight: Radius.circular(12.0),
+            SizedBox(
+              width: constraints.maxWidth,
+              height: constraints.maxHeight - 80,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.0),
+                child: GridTile(
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pushNamed(
+                        ProductDetailScreen.routeName,
+                        arguments: product.id,
+                      );
+                    },
+                    child: Hero(
+                      tag: product.id,
+                      child: FadeInImage(
+                        placeholder:
+                            const AssetImage('assets/images/placeholder.jpg'),
+                        image: NetworkImage(
+                          product.imageUrl,
+                        ),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  header: Container(
+                    alignment: Alignment.centerLeft,
+                    child: Consumer<Product>(
+                      builder: (ctx, product, _) => IconButton(
+                        icon: Icon(
+                          product.isFavorite
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: product.isFavorite
+                              ? Colors.blueGrey
+                              : Colors.grey,
+                        ),
+                        onPressed: () async {
+                          try {
+                            await product.toggleFavorite(
+                              auth.token,
+                              auth.userId,
+                            );
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: product.isFavorite
+                                    ? const Text(
+                                        'Товар добален в список желаний')
+                                    : const Text(
+                                        'Товар удален из списка желаний'),
+                                duration: const Duration(seconds: 1),
+                              ),
+                            );
+                          } catch (error) {
+                            scaffold.showSnackBar(
+                              SnackBar(
+                                content: Text(error.toString()),
+                                duration: const Duration(seconds: 1),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ),
                 ),
               ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 4.0),
               child: Text(
-                '\$ ${product.price}',
+                product.title,
                 style: const TextStyle(
-                  color: Colors.white,
+                  fontSize: 14,
                 ),
+              ),
+            ),
+            Consumer<Cart>(
+              builder: (context, cart, _) => GestureDetector(
+                child: Chip(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0)),
+                  label: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        cart.isProductInCart(product.id)
+                            ? Icons.shopping_bag
+                            : Icons.shopping_bag_outlined,
+                        color: cart.isProductInCart(product.id)
+                            ? Colors.blueGrey
+                            : Colors.blueGrey,
+                            size: 22,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 4.0),
+                        child: Text(
+                          '${product.price.floor()} ₽',
+                          style: const TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                onTap: () {
+                  cart.addItem(
+                    product.id,
+                    product.price,
+                    product.title,
+                  );
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text(
+                        'Товар добавлен в корзину',
+                      ),
+                      duration: const Duration(seconds: 1),
+                      action: SnackBarAction(
+                          textColor: Colors.white,
+                          label: 'ОТМЕНА',
+                          onPressed: () {
+                            cart.removeSingleItem(product.id);
+                          }),
+                    ),
+                  );
+                },
               ),
             ),
           ],
-        ),
-        footer: GridTileBar(
-          title: Text(
-            product.title,
-            textAlign: TextAlign.center,
-          ),
-          backgroundColor: Colors.black87,
-          leading: Consumer<Product>(
-            builder: (ctx, product, _) => IconButton(
-              icon: Icon(
-                product.isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-              onPressed: () async {
-                try {
-                  await product.toggleFavorite(
-                    auth.token,
-                    auth.userId,
-                  );
-                } catch (error) {
-                  scaffold.showSnackBar(
-                    SnackBar(
-                      content: Text(error.toString()),
-                      duration: const Duration(seconds: 1),
-                    ),
-                  );
-                }
-              },
-            ),
-          ),
-          trailing: IconButton(
-            icon: Icon(
-              Icons.shopping_cart,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            onPressed: () {
-              cart.addItem(
-                product.id,
-                product.price,
-                product.title,
-              );
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('Added item to cart'),
-                  duration: const Duration(seconds: 1),
-                  action: SnackBarAction(
-                      label: 'UNDO',
-                      onPressed: () {
-                        cart.removeSingleItem(product.id);
-                      }),
-                ),
-              );
-            },
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

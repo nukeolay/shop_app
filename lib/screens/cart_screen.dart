@@ -18,7 +18,7 @@ class _CartScreenState extends State<CartScreen> {
     Cart cart = Provider.of<Cart>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Your Cart'),
+        title: const Text('Корзина'),
       ),
       body: Column(
         children: [
@@ -36,7 +36,7 @@ class _CartScreenState extends State<CartScreen> {
                   const Spacer(),
                   Chip(
                     label: Text(
-                      '\$${cart.totalAmount.toStringAsFixed(2)}',
+                      '${cart.totalAmount.toStringAsFixed(2)} ₽',
                       style: TextStyle(
                           color: Theme.of(context)
                               .primaryTextTheme

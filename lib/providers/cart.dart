@@ -98,4 +98,16 @@ class Cart extends ChangeNotifier {
     _items = {};
     notifyListeners();
   }
+
+  bool isProductInCart(String productId) {
+    return _items!.containsKey(productId);
+  }
+
+  int productQuantity(String productId) {
+    try {
+      return _items![productId]!.quantity;
+    } catch (e) {
+      return 0;
+    }
+  }
 }

@@ -23,7 +23,7 @@ class UserProductsScreen extends StatelessWidget {
     return Scaffold(
       drawer: const AppDrawer(),
       appBar: AppBar(
-        title: const Text('Your Products'),
+        title: const Text('Управление товарами'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),

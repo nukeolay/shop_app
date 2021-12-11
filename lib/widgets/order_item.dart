@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../providers/orders.dart' as prv;
@@ -14,7 +12,6 @@ class OrderItem extends StatefulWidget {
 
 class _OrderItemState extends State<OrderItem> {
   bool _isExpanded = false;
-  //double _height = 100;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +32,7 @@ class _OrderItemState extends State<OrderItem> {
                 );
               },
               child: ListTile(
-                title: Text('\$${widget.order.amount.toStringAsFixed(2)}'),
+                title: Text('${widget.order.amount.toStringAsFixed(2)} ₽'),
                 subtitle: Text(
                   DateFormat('dd.MM.yyyy hh:mm').format(widget.order.dateTime),
                 ),
@@ -49,6 +46,7 @@ class _OrderItemState extends State<OrderItem> {
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
               height: _isExpanded ? widget.order.products.length * 40 : 0,
               child: ListView(
+                physics: const NeverScrollableScrollPhysics(),
                 children: [
                   ...widget.order.products
                       .map((product) => Padding(
@@ -60,7 +58,7 @@ class _OrderItemState extends State<OrderItem> {
                                     style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold)),
-                                Text('${product.quantity}x \$${product.price}',
+                                Text('${product.quantity} x ${product.price} ₽',
                                     style: const TextStyle(
                                         fontSize: 18, color: Colors.grey)),
                               ],

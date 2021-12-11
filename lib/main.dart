@@ -14,6 +14,7 @@ import './screens/product_detail_screen.dart';
 import './screens/products_overview_screen.dart';
 import './screens/auth_screen.dart';
 import './screens/splash_screen.dart';
+import './screens/wishlist_screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -52,12 +53,17 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'MyShop',
           theme: ThemeData(
-            fontFamily: 'Lato',
+            fontFamily: 'Montserrat',
             pageTransitionsTheme: PageTransitionsTheme(builders: {
               TargetPlatform.android: CustomPageTransitionBuilder(),
               TargetPlatform.iOS: CustomPageTransitionBuilder(),
             }),
-            primarySwatch: Colors.purple,
+            primarySwatch: Colors.blueGrey,
+            appBarTheme: const AppBarTheme(
+              color: Colors.transparent,
+              shadowColor: Colors.transparent,
+              foregroundColor: Color(0xFF455A50),
+            ),
             colorScheme: ThemeData.light()
                 .colorScheme
                 .copyWith(secondary: Colors.deepOrange),
@@ -75,6 +81,7 @@ class MyApp extends StatelessWidget {
           routes: {
             ProductsOverviewScreen.routeName: (ctx) =>
                 const ProductsOverviewScreen(),
+            WishlistScreen.routeName: (ctx) => const WishlistScreen(),
             ProductDetailScreen.routeName: (ctx) => const ProductDetailScreen(),
             CartScreen.routeName: (ctx) => const CartScreen(),
             OrdersScreen.routeName: (ctx) => const OrdersScreen(),
