@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/products.dart';
@@ -213,8 +212,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     ),
                     TextFormField(
                       initialValue: _initValues['description'],
-                      decoration:
-                          const InputDecoration(labelText: 'Описание'),
+                      decoration: const InputDecoration(labelText: 'Описание'),
                       maxLines: 3,
                       keyboardType: TextInputType.multiline,
                       focusNode: _descriptionFocusNode,
@@ -256,18 +254,19 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           height: 100,
                           child: _imageUrlController.text.isEmpty
                               ? const Center(
-                                  child: Text('Введите ссылку'),
+                                  child:
+                                      Icon(Icons.image_not_supported_outlined),
                                 )
                               : FittedBox(
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.scaleDown,
                                   child:
                                       Image.network(_imageUrlController.text),
                                 ),
                         ),
                         Expanded(
                           child: TextFormField(
-                            decoration:
-                                const InputDecoration(labelText: 'Ссылка на изображение'),
+                            decoration: const InputDecoration(
+                                labelText: 'Ссылка на изображение'),
                             keyboardType: TextInputType.url,
                             textInputAction: TextInputAction.done,
                             controller: _imageUrlController,

@@ -83,23 +83,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 titlePadding: const EdgeInsets.all(0.0),
                 title: Container(
                   width: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.white.withOpacity(0.5),
-                        Colors.blueGrey.withOpacity(1),
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: const [0, 1],
-                    ),
-                  ),
+                  color: Colors.white.withOpacity(0.5),
                   child: Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: Text(
                       loadedProduct.title,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.black54),
+                      style: TextStyle(color: Colors.blueGrey[800]),
                     ),
                   ),
                 ),
