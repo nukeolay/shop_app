@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/http_exception.dart';
@@ -15,18 +13,15 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
-    // final transformConfig = Matrix4.rotationZ(-8 * pi / 180);
-    // transformConfig.translate(-10.0);
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
       body: Stack(
         children: <Widget>[
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  const Color.fromRGBO(215, 117, 255, 1).withOpacity(0.5),
-                  const Color.fromRGBO(255, 188, 117, 1).withOpacity(0.9),
+                  Colors.white.withOpacity(0.5),
+                  Colors.blueGrey.withOpacity(0.9),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -35,6 +30,7 @@ class AuthScreen extends StatelessWidget {
             ),
           ),
           SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
             child: SizedBox(
               height: deviceSize.height,
               width: deviceSize.width,
@@ -45,32 +41,9 @@ class AuthScreen extends StatelessWidget {
                   Flexible(
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 20.0),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 94.0),
-                      transform: Matrix4.rotationZ(-8 * pi / 180)
-                        ..translate(-10.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.deepOrange.shade900,
-                        boxShadow: const [
-                          BoxShadow(
-                            blurRadius: 8,
-                            color: Colors.black26,
-                            offset: Offset(0, 2),
-                          )
-                        ],
-                      ),
-                      child: Text(
-                        'MyShop',
-                        style: TextStyle(
-                          color: Theme.of(context)
-                              .accentTextTheme
-                              .headline6!
-                              .color,
-                          fontSize: 50,
-                          fontFamily: 'Anton',
-                          fontWeight: FontWeight.normal,
-                        ),
+                      padding: const EdgeInsets.all(20.0),
+                      child: const Image(
+                        image: AssetImage('assets/images/logo_named.png'),
                       ),
                     ),
                   ),
@@ -146,20 +119,26 @@ class _AuthCardState extends State<AuthCard>
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('An Error Occured!'),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        title: const Text('Ошибка!'),
         content: Text(message),
         actions: [
-          TextButton(
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.blue),
-            ),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-            child: const Text(
-              'Ok',
-              style: TextStyle(
-                color: Colors.white,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: TextButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.blueGrey),
+              ),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+              child: const Text(
+                'Ok',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
               ),
             ),
           )
@@ -192,21 +171,21 @@ class _AuthCardState extends State<AuthCard>
         );
       }
     } on HttpException catch (error) {
-      var errorMessage = 'Authentication failed';
+      var errorMessage = 'Ошибка входа';
       if (error.toString().contains('EMAIL_EXISTS')) {
-        errorMessage = 'This email address is already in use';
+        errorMessage = 'Данный адрес электронной почты уже зарегистрирован';
       } else if (error.toString().contains('INVALID_EMAIL')) {
-        errorMessage = 'This is not vslid email address';
+        errorMessage = 'Указан некорректный адрес электронной почты';
       } else if (error.toString().contains('WEAK_PASSWORD')) {
-        errorMessage = 'This password is too weak';
+        errorMessage = 'Пароль слишком простой';
       } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
-        errorMessage = 'Could not find registered user with this email';
+        errorMessage = 'Данный адрес электронной почты не зарегистрирован';
       } else if (error.toString().contains('INVALID_PASSWORD')) {
-        errorMessage = 'Invalid password';
+        errorMessage = 'Неправильный пароль';
       }
       _showErrorDialog(errorMessage);
     } catch (error) {
-      const errorMessage = 'Could not authenticate you. Please try again later';
+      const errorMessage = 'Ошибка. Попробуйте позже';
       _showErrorDialog(errorMessage);
     }
     setState(() {
@@ -247,6 +226,7 @@ class _AuthCardState extends State<AuthCard>
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
@@ -255,7 +235,7 @@ class _AuthCardState extends State<AuthCard>
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || !value.contains('@')) {
-                      return 'Invalid email!';
+                      return 'Некорректный e-mail!';
                     }
                     return null;
                   },
@@ -264,12 +244,12 @@ class _AuthCardState extends State<AuthCard>
                   },
                 ),
                 TextFormField(
-                  decoration: const InputDecoration(labelText: 'Password'),
+                  decoration: const InputDecoration(labelText: 'Пароль'),
                   obscureText: true,
                   controller: _passwordController,
                   validator: (value) {
                     if (value == null || value.length < 5) {
-                      return 'Password is too short!';
+                      return 'Пароль слишком короткий!';
                     }
                   },
                   onSaved: (value) {
@@ -290,12 +270,12 @@ class _AuthCardState extends State<AuthCard>
                       child: TextFormField(
                         enabled: _authMode == authMode.Signup,
                         decoration: const InputDecoration(
-                            labelText: 'Confirm Password'),
+                            labelText: 'Подтвердите пароль'),
                         obscureText: true,
                         validator: _authMode == authMode.Signup
                             ? (value) {
                                 if (value != _passwordController.text) {
-                                  return 'Passwords do not match!';
+                                  return 'Пароли не совпадают!';
                                 }
                               }
                             : null,
@@ -310,8 +290,9 @@ class _AuthCardState extends State<AuthCard>
                   const CircularProgressIndicator()
                 else
                   RaisedButton(
-                    child:
-                        Text(_authMode == authMode.Login ? 'LOGIN' : 'SIGN UP'),
+                    child: Text(_authMode == authMode.Login
+                        ? 'ВОЙТИ'
+                        : 'ЗАРЕГИСТРИРОВАТЬСЯ'),
                     onPressed: _submit,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
@@ -326,7 +307,7 @@ class _AuthCardState extends State<AuthCard>
                 ),
                 FlatButton(
                   child: Text(
-                      '${_authMode == authMode.Login ? 'SIGNUP' : 'LOGIN'} INSTEAD'),
+                      _authMode == authMode.Login ? 'РЕГИСТРАЦИЯ' : 'ВХОД'),
                   onPressed: _switchAuthMode,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 30.0, vertical: 4),

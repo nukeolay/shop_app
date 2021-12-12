@@ -16,7 +16,7 @@ class WishlistScreen extends StatefulWidget {
 }
 
 class _WishlistScreenState extends State<WishlistScreen> {
-  bool _showOnlyFavorites = true;
+  final bool _showOnlyFavorites = true;
 
   bool _isLoading = false;
 

@@ -13,6 +13,7 @@ class ProductsGrid extends StatelessWidget {
     final products =
         showOnlyFavorites ? productsData.favoriteItems : productsData.items;
     return GridView.builder(
+      physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.all(10.0),
       itemCount: products.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

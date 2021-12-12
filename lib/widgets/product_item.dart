@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../widgets/badge.dart';
 import '../providers/auth.dart';
 import '../providers/cart.dart';
 import '../providers/product.dart';
@@ -11,7 +12,6 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
-    //final cart = Provider.of<Cart>(context, listen: false);
     final auth = Provider.of<Auth>(context, listen: false);
     final scaffold = ScaffoldMessenger.of(context);
 
@@ -22,7 +22,7 @@ class ProductItem extends StatelessWidget {
           children: [
             SizedBox(
               width: constraints.maxWidth,
-              height: constraints.maxHeight - 80,
+              height: constraints.maxHeight - 100,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
                 child: GridTile(
@@ -49,6 +49,7 @@ class ProductItem extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Consumer<Product>(
                       builder: (ctx, product, _) => IconButton(
+                        splashRadius: 1,
                         icon: Icon(
                           product.isFavorite
                               ? Icons.favorite
@@ -106,18 +107,27 @@ class ProductItem extends StatelessWidget {
                   label: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        cart.isProductInCart(product.id)
-                            ? Icons.shopping_bag
-                            : Icons.shopping_bag_outlined,
-                        color: cart.isProductInCart(product.id)
-                            ? Colors.blueGrey
-                            : Colors.blueGrey,
-                            size: 22,
-                      ),
+                      cart.productQuantity(product.id) > 0
+                          ? Badge(
+                              value:
+                                  cart.productQuantity(product.id).toString(),
+                                  color: Colors.transparent,
+                                  top: 9,
+                                  right: 5,
+                              child: const Icon(
+                                Icons.shopping_bag,
+                                color: Colors.blueGrey,
+                                size: 26,
+                              ),
+                            )
+                          : const Icon(
+                              Icons.shopping_bag_outlined,
+                              color: Colors.blueGrey,
+                              size: 26,
+                            ),
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 4.0),
+                            horizontal: 8.0, vertical: 0.0),
                         child: Text(
                           '${product.price.floor()} ₽',
                           style: const TextStyle(

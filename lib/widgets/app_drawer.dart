@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/screens/cart_screen.dart';
 import '../screens/wishlist_screen.dart';
 import '../providers/auth.dart';
 import '../screens/user_products_screen.dart';
@@ -15,15 +16,21 @@ class AppDrawer extends StatelessWidget {
         children: [
           AppBar(
             centerTitle: true,
-            title: const Text(
-              'Voda Jewel',
-              textAlign: TextAlign.center,
-            ),
+            title: const Padding(
+                padding: EdgeInsets.only(
+                  top: 36,
+                  bottom: 30,
+                  left: 30,
+                  right: 30,
+                ),
+                child: Image(
+                  image: AssetImage('assets/images/logo_named.png'),
+                )),
             automaticallyImplyLeading: false,
           ),
           const Divider(height: 0),
           ListTile(
-            leading: const Icon(Icons.shopping_bag_outlined),
+            leading: const Icon(Icons.menu_book),
             title: const Text('Каталог'),
             onTap: () {
               Navigator.of(context).pushReplacementNamed('/');
@@ -31,7 +38,15 @@ class AppDrawer extends StatelessWidget {
           ),
           const Divider(height: 0),
           ListTile(
-            leading: const Icon(Icons.favorite_outlined),
+            leading: const Icon(Icons.shopping_basket_outlined),
+            title: const Text('Корзина'),
+            onTap: () {
+              Navigator.of(context).pushReplacementNamed(CartScreen.routeName);
+            },
+          ),
+          const Divider(height: 0),
+          ListTile(
+            leading: const Icon(Icons.favorite_border),
             title: const Text('Список желаний'),
             onTap: () {
               Navigator.of(context)
@@ -54,6 +69,16 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.of(context)
                   .pushReplacementNamed(UserProductsScreen.routeName);
+            },
+          ),
+          const Divider(height: 0),
+          ListTile(
+            leading: const Icon(Icons.account_circle_outlined),
+            title: const Text('Управление аккаунтом'),
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacementNamed('/');
+              Provider.of<Auth>(context, listen: false).logout();
             },
           ),
           const Divider(height: 0),

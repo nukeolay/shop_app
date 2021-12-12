@@ -105,8 +105,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
           await showDialog(
             context: context,
             builder: (ctx) => AlertDialog(
-              title: const Text('An error accured!'),
-              content: Text('Something went wrong: ${error.toString}'),
+              title: const Text('Ошибка!'),
+              content: Text('Что-то пошло не так: ${error.toString}'),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -136,7 +136,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Product'),
+        title: const Text('Редактирование товара'),
         actions: [
           IconButton(
             onPressed: _saveForm,
@@ -153,17 +153,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
               child: Form(
                 key: _form,
                 child: ListView(
+                  physics: const BouncingScrollPhysics(),
                   children: [
                     TextFormField(
                       initialValue: _initValues['title'],
-                      decoration: const InputDecoration(labelText: 'Title'),
+                      decoration: const InputDecoration(labelText: 'Название'),
                       textInputAction: TextInputAction.next,
                       onFieldSubmitted: (_) {
                         FocusScope.of(context).requestFocus(_priceFocusNode);
                       },
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return 'Please provide a value.';
+                          return 'Укажите значение.';
                         }
                         return null;
                       },
@@ -180,7 +181,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     ),
                     TextFormField(
                       initialValue: _initValues['price'],
-                      decoration: const InputDecoration(labelText: 'Price'),
+                      decoration: const InputDecoration(labelText: 'Цена'),
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
                       focusNode: _priceFocusNode,
@@ -190,13 +191,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       },
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return 'Please enter a price.';
+                          return 'Укажите цену.';
                         }
                         if (double.tryParse(value) == null) {
-                          return 'Please enter a valid number.';
+                          return 'Укажите корректное значение.';
                         }
                         if (double.parse(value) <= 0) {
-                          return 'Please enter a number greater than 0.';
+                          return 'Укажите значение больше 0.';
                         }
                       },
                       onSaved: (value) {
@@ -213,16 +214,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     TextFormField(
                       initialValue: _initValues['description'],
                       decoration:
-                          const InputDecoration(labelText: 'Description'),
+                          const InputDecoration(labelText: 'Описание'),
                       maxLines: 3,
                       keyboardType: TextInputType.multiline,
                       focusNode: _descriptionFocusNode,
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return 'Please enter a description.';
+                          return 'Укажите описание.';
                         }
                         if (value.length < 10) {
-                          return 'Should be at leas 10 characters';
+                          return 'Не менее 10 символов';
                         }
                         return null;
                       },
@@ -255,7 +256,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           height: 100,
                           child: _imageUrlController.text.isEmpty
                               ? const Center(
-                                  child: Text('Enter a URL'),
+                                  child: Text('Введите ссылку'),
                                 )
                               : FittedBox(
                                   fit: BoxFit.cover,
@@ -266,7 +267,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         Expanded(
                           child: TextFormField(
                             decoration:
-                                const InputDecoration(labelText: 'Image URL'),
+                                const InputDecoration(labelText: 'Ссылка на изображение'),
                             keyboardType: TextInputType.url,
                             textInputAction: TextInputAction.done,
                             controller: _imageUrlController,
@@ -277,16 +278,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             onFieldSubmitted: (_) => _saveForm(),
                             validator: (value) {
                               if (value!.isEmpty) {
-                                return 'Please enter an image URL.';
+                                return 'Введите ссылку.';
                               }
                               if (!value.startsWith('http') &&
                                   !value.startsWith('https')) {
-                                return 'Please enter a valid URL.';
+                                return 'Введите ссылку.';
                               }
                               if (!value.endsWith('.png') &&
                                   !value.endsWith('.jpg') &&
                                   !value.endsWith('.jpeg')) {
-                                return 'Please enter a valid image URL.';
+                                return 'Введите ссылку изображения.';
                               }
                               return null;
                             },

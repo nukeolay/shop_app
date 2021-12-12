@@ -44,6 +44,7 @@ class UserProductsScreen extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.all(8),
                     child: ListView.builder(
+                        physics: const BouncingScrollPhysics(),
                         itemCount: productData.items.length,
                         itemBuilder: (_, index) => Column(
                               children: [

@@ -29,7 +29,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Your Orders'),
+        title: const Text('Мои заказы'),
       ),
       drawer: const AppDrawer(),
       body: FutureBuilder(
@@ -45,6 +45,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
             } else {
               return Consumer<Orders>(builder: (ctx, orderData, _) {
                 return ListView.builder(
+                  physics: const BouncingScrollPhysics(),
                   itemCount: orderData.orders.length,
                   itemBuilder: (ctx, index) =>
                       wgt.OrderItem(orderData.orders[index]),

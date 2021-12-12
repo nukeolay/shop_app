@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../providers/products.dart';
 import '../providers/cart.dart';
+import '../providers/product.dart';
 
-class CartItem extends StatelessWidget {
+class CartItem extends StatefulWidget {
   const CartItem({
     Key? key,
     required this.id,
@@ -18,79 +20,117 @@ class CartItem extends StatelessWidget {
   final String title;
 
   @override
+  State<CartItem> createState() => _CartItemState();
+}
+
+class _CartItemState extends State<CartItem> {
+  @override
   Widget build(BuildContext context) {
-    return Dismissible(
-      key: ValueKey(id),
-      background: Container(
-        color: Theme.of(context).errorColor,
-        child: const Icon(
-          Icons.delete,
-          color: Colors.white,
-          size: 40,
-        ),
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        margin: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 4,
-        ),
+    Product product = Provider.of<Products>(context, listen: false)
+        .findById(widget.productId);
+    Cart cart = Provider.of<Cart>(context);
+
+    return Card(
+      elevation: 0,
+      color: Colors.grey.shade100,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
       ),
-      direction: DismissDirection.endToStart,
-      confirmDismiss: (direction) {
-        return showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-              title: const Text('Are you sure'),
-              content: const Text('Delete item from cart?'),
-              actions: [
-                TextButton(
-                  child: Text(
-                    'No',
-                    style: TextStyle(
-                      color: Theme.of(context).errorColor,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(ctx).pop(false);
-                  },
-                ),
-                TextButton(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          Theme.of(context).primaryColor)),
-                  child: const Text(
-                    'Yes',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(ctx).pop(true);
-                  },
-                )
-              ]),
-        );
-      },
-      onDismissed: (direction) {
-        Provider.of<Cart>(context, listen: false).removeItem(productId);
-      },
-      child: Card(
-        margin: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 4,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: ListTile(
-            leading: CircleAvatar(
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: FittedBox(child: Text('$price ₽')),
+      margin: const EdgeInsets.symmetric(
+        horizontal: 15,
+        vertical: 6,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: ListTile(
+          leading: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: FadeInImage(
+              width: 60,
+              placeholder: const AssetImage('assets/images/placeholder.jpg'),
+              image: NetworkImage(
+                product.imageUrl,
               ),
+              fit: BoxFit.fitWidth,
             ),
-            title: Text(title),
-            subtitle: Text('Total: ${price * quantity} ₽'),
-            trailing: Text('$quantity x'),
+          ),
+          title: Text(widget.title),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text('${widget.price} ₽'),
+              ),
+              FittedBox(
+                alignment: Alignment.centerLeft,
+                fit: BoxFit.scaleDown,
+                child: Container(
+                  padding: const EdgeInsets.all(2.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20.0),
+                    color: Colors.grey.shade400,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        child: const SizedBox(
+                          width: 40,
+                          child: Icon(
+                            Icons.remove,
+                            size: 22,
+                            color: Colors.white,
+                          ),
+                        ),
+                        onTap: () {
+                          setState(() {
+                            cart.removeSingleItem(
+                              widget.productId,
+                            );
+                          });
+                        },
+                      ),
+                      Text(
+                        '${cart.productQuantity(widget.productId)}',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                      ),
+                      GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        child: const SizedBox(
+                          width: 40,
+                          child: Icon(
+                            Icons.add,
+                            size: 22,
+                            color: Colors.white,
+                          ),
+                        ),
+                        onTap: () {
+                          setState(() {
+                            cart.addItem(
+                              widget.productId,
+                              product.price,
+                              product.title,
+                            );
+                          });
+                        },
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          trailing: Text(
+            '${widget.quantity * widget.price} ₽',
+            style: const TextStyle(color: Colors.blueGrey),
           ),
         ),
       ),

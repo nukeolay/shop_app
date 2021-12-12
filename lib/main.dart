@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './helpers/custom_route.dart';
@@ -51,7 +50,7 @@ class MyApp extends StatelessWidget {
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'MyShop',
+          title: 'Voda Jewel',
           theme: ThemeData(
             fontFamily: 'Montserrat',
             pageTransitionsTheme: PageTransitionsTheme(builders: {

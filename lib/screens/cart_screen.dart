@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../widgets/app_drawer.dart';
 import '../providers/orders.dart';
 import '../providers/cart.dart' show Cart;
 import '../widgets/cart_item.dart';
@@ -16,27 +17,34 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     Cart cart = Provider.of<Cart>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Корзина'),
       ),
+      drawer: const AppDrawer(),
       body: Column(
         children: [
           Card(
+            elevation: 0,
+            color: Colors.grey.shade100,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
             margin: const EdgeInsets.all(15),
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(15.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    'Total',
+                    'Сумма',
                     style: TextStyle(fontSize: 20),
                   ),
                   const Spacer(),
                   Chip(
                     label: Text(
-                      '${cart.totalAmount.toStringAsFixed(2)} ₽',
+                      '${cart.totalAmount.toStringAsFixed(1)} ₽',
                       style: TextStyle(
                           color: Theme.of(context)
                               .primaryTextTheme
@@ -53,14 +61,14 @@ class _CartScreenState extends State<CartScreen> {
           const SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
+              physics: const BouncingScrollPhysics(),
               itemCount: cart.cartItems!.length,
               itemBuilder: (ctx, index) => CartItem(
-                id: cart.cartItems!.values.toList()[index].id,
-                productId: cart.cartItems!.keys.toList()[index],
-                title: cart.cartItems!.values.toList()[index].title,
-                quantity: cart.cartItems!.values.toList()[index].quantity,
-                price: cart.cartItems!.values.toList()[index].price,
-              ),
+                  id: cart.cartItems!.values.toList()[index].id,
+                  productId: cart.cartItems!.keys.toList()[index],
+                  title: cart.cartItems!.values.toList()[index].title,
+                  quantity: cart.cartItems!.values.toList()[index].quantity,
+                  price: cart.cartItems!.values.toList()[index].price),
             ),
           ),
         ],
@@ -104,7 +112,7 @@ class _OrderButtonState extends State<OrderButton> {
               height: 10,
               child: CircularProgressIndicator(),
             )
-          : const Text('ORDER NOW'),
+          : const Text('ОФОРМИТЬ ЗАКАЗ'),
     );
   }
 }

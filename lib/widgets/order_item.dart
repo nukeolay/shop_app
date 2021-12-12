@@ -20,6 +20,10 @@ class _OrderItemState extends State<OrderItem> {
       curve: Curves.linear,
       height: _isExpanded ? widget.order.products.length * 40.0 + 100.0 : 95,
       child: Card(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         margin: const EdgeInsets.all(10),
         child: Column(
           children: [
@@ -32,7 +36,7 @@ class _OrderItemState extends State<OrderItem> {
                 );
               },
               child: ListTile(
-                title: Text('${widget.order.amount.toStringAsFixed(2)} ₽'),
+                title: Text('${widget.order.amount.toStringAsFixed(1)} ₽'),
                 subtitle: Text(
                   DateFormat('dd.MM.yyyy hh:mm').format(widget.order.dateTime),
                 ),
@@ -56,8 +60,9 @@ class _OrderItemState extends State<OrderItem> {
                               children: [
                                 Text(product.title,
                                     style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold)),
+                                      fontSize: 18,
+                                      //fontWeight: FontWeight.bold
+                                    )),
                                 Text('${product.quantity} x ${product.price} ₽',
                                     style: const TextStyle(
                                         fontSize: 18, color: Colors.grey)),

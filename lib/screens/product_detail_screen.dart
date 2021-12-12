@@ -29,6 +29,112 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final scaffold = ScaffoldMessenger.of(context);
 
     return Scaffold(
+      body: SafeArea(
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+              actions: [
+                IconButton(
+                  splashRadius: 1,
+                  icon: Icon(
+                    loadedProduct.isFavorite
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    color: loadedProduct.isFavorite
+                        ? Colors.blueGrey
+                        : Colors.grey,
+                  ),
+                  onPressed: () async {
+                    try {
+                      setState(() {});
+                      await loadedProduct.toggleFavorite(
+                        auth.token,
+                        auth.userId,
+                      );
+
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: loadedProduct.isFavorite
+                              ? const Text('Товар добален в список желаний')
+                              : const Text('Товар удален из списка желаний'),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    } catch (error) {
+                      scaffold.showSnackBar(
+                        SnackBar(
+                          content: Text(error.toString()),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ],
+              expandedHeight: MediaQuery.of(context).size.height * 0.6,
+              pinned: true,
+              iconTheme: const IconThemeData(
+                color: Colors.black,
+              ),
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                titlePadding: const EdgeInsets.all(0.0),
+                title: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.white.withOpacity(0.5),
+                        Colors.blueGrey.withOpacity(1),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0, 1],
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Text(
+                      loadedProduct.title,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.black54),
+                    ),
+                  ),
+                ),
+                background: Hero(
+                  tag: productId,
+                  child: Image.network(
+                    loadedProduct.imageUrl,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+            SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Text(
+                      loadedProduct.description,
+                      textAlign: TextAlign.start,
+                      softWrap: true,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
       bottomNavigationBar: Stack(
         alignment: Alignment.center,
         children: [
@@ -142,90 +248,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             ),
           ),
         ],
-      ),
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              actions: [
-                IconButton(
-                  icon: Icon(
-                    loadedProduct.isFavorite
-                        ? Icons.favorite
-                        : Icons.favorite_border,
-                    color: loadedProduct.isFavorite
-                        ? Colors.blueGrey
-                        : Colors.grey,
-                  ),
-                  onPressed: () async {
-                    try {
-                      await loadedProduct.toggleFavorite(
-                        auth.token,
-                        auth.userId,
-                      );
-                      setState(() {});
-                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: loadedProduct.isFavorite
-                              ? const Text('Товар добален в список желаний')
-                              : const Text('Товар удален из списка желаний'),
-                          duration: const Duration(seconds: 1),
-                        ),
-                      );
-                    } catch (error) {
-                      scaffold.showSnackBar(
-                        SnackBar(
-                          content: Text(error.toString()),
-                          duration: const Duration(seconds: 1),
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ],
-              expandedHeight: MediaQuery.of(context).size.height * 0.6,
-              pinned: true,
-              iconTheme: const IconThemeData(
-                color: Colors.black,
-              ),
-              flexibleSpace: FlexibleSpaceBar(
-                centerTitle: true,
-                titlePadding: const EdgeInsets.all(8.0),
-                title: Text(loadedProduct.title,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.blueGrey)),
-                background: Hero(
-                  tag: productId,
-                  child: Image.network(
-                    loadedProduct.imageUrl,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      loadedProduct.description,
-                      textAlign: TextAlign.start,
-                      softWrap: true,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
