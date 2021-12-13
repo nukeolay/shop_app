@@ -10,7 +10,7 @@ class Product with ChangeNotifier {
   final String title;
   final String description;
   final double price;
-  final String imageUrl;
+  final List<String> imageUrl;
   bool isFavorite;
 
   Product({

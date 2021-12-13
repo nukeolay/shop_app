@@ -22,7 +22,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     title: '',
     price: 0,
     description: '',
-    imageUrl: '',
+    imageUrl: [],
   );
 
   Map<String, String> _initValues = {
@@ -55,7 +55,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           'price': _editedProduct.price.toString(),
           'imageUrl': '',
         };
-        _imageUrlController.text = _editedProduct.imageUrl;
+        _imageUrlController.text = _editedProduct.imageUrl[0];
         _isInit = false;
       }
     }
@@ -291,12 +291,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
                               return null;
                             },
                             onSaved: (value) {
+                              _editedProduct.imageUrl.add('$value');
                               _editedProduct = Product(
                                 id: _editedProduct.id,
                                 title: _editedProduct.title,
                                 price: _editedProduct.price,
                                 description: _editedProduct.description,
-                                imageUrl: '$value',
+                                imageUrl: _editedProduct.imageUrl,
                                 isFavorite: _editedProduct.isFavorite,
                               );
                             },
@@ -311,3 +312,77 @@ class _EditProductScreenState extends State<EditProductScreen> {
     );
   }
 }
+
+// class AddPhoto extends StatelessWidget {
+//   AddPhoto({required this.editedProduct, Key? key}) : super(key: key);
+//   Product editedProduct;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       crossAxisAlignment: CrossAxisAlignment.end,
+//       children: [
+//         Container(
+//           margin: const EdgeInsets.only(
+//             top: 8,
+//             right: 10,
+//           ),
+//           decoration: BoxDecoration(
+//             border: Border.all(
+//               width: 1,
+//               color: Colors.grey,
+//             ),
+//           ),
+//           width: 100,
+//           height: 100,
+//           child: _imageUrlController.text.isEmpty
+//               ? const Center(
+//                   child: Icon(Icons.image_not_supported_outlined),
+//                 )
+//               : FittedBox(
+//                   fit: BoxFit.scaleDown,
+//                   child: Image.network(_imageUrlController.text),
+//                 ),
+//         ),
+//         Expanded(
+//           child: TextFormField(
+//             decoration:
+//                 const InputDecoration(labelText: 'Ссылка на изображение'),
+//             keyboardType: TextInputType.url,
+//             textInputAction: TextInputAction.done,
+//             controller: _imageUrlController,
+//             focusNode: _imageUrlFocusNode,
+//             onEditingComplete: () {
+//               setState(() {});
+//             },
+//             onFieldSubmitted: (_) => _saveForm(),
+//             validator: (value) {
+//               if (value!.isEmpty) {
+//                 return 'Введите ссылку.';
+//               }
+//               if (!value.startsWith('http') && !value.startsWith('https')) {
+//                 return 'Введите ссылку.';
+//               }
+//               if (!value.endsWith('.png') &&
+//                   !value.endsWith('.jpg') &&
+//                   !value.endsWith('.jpeg')) {
+//                 return 'Введите ссылку изображения.';
+//               }
+//               return null;
+//             },
+//             onSaved: (value) {
+//               _editedProduct = Product(
+//                 id: _editedProduct.id,
+//                 title: _editedProduct.title,
+//                 price: _editedProduct.price,
+//                 description: _editedProduct.description,
+//                 imageUrl: '$value',
+//                 isFavorite: _editedProduct.isFavorite,
+//               );
+//             },
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }

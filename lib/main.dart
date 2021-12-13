@@ -66,6 +66,8 @@ class MyApp extends StatelessWidget {
             colorScheme: ThemeData.light()
                 .colorScheme
                 .copyWith(secondary: Colors.deepOrange),
+            progressIndicatorTheme:
+                const ProgressIndicatorThemeData(color: Colors.blueGrey),
           ),
           home: auth.isAuth
               ? const ProductsOverviewScreen()

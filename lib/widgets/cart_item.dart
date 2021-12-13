@@ -49,7 +49,7 @@ class _CartItemState extends State<CartItem> {
               width: 60,
               placeholder: const AssetImage('assets/images/placeholder.jpg'),
               image: NetworkImage(
-                product.imageUrl,
+                product.imageUrl[0],
               ),
               fit: BoxFit.fitWidth,
             ),

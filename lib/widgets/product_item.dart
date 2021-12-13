@@ -39,7 +39,7 @@ class ProductItem extends StatelessWidget {
                         placeholder:
                             const AssetImage('assets/images/placeholder.jpg'),
                         image: NetworkImage(
-                          product.imageUrl,
+                          product.imageUrl[0],
                         ),
                         fit: BoxFit.cover,
                       ),
@@ -95,8 +95,9 @@ class ProductItem extends StatelessWidget {
               child: Text(
                 product.title,
                 style: const TextStyle(
-                  fontSize: 14,
+                  //fontSize: 14,
                 ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             Consumer<Cart>(

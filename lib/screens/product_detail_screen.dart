@@ -93,12 +93,21 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                   ),
                 ),
-                background: Hero(
-                  tag: productId,
-                  child: Image.network(
-                    loadedProduct.imageUrl,
-                    fit: BoxFit.cover,
-                  ),
+                background: PageView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: loadedProduct.imageUrl.length,
+                  itemBuilder: (context, index) => index == 0
+                      ? Hero(
+                          tag: productId,
+                          child: Image.network(
+                            loadedProduct.imageUrl[index],
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : Image.network(
+                          loadedProduct.imageUrl[index],
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
             ),

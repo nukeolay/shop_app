@@ -56,7 +56,9 @@ class Products with ChangeNotifier {
             title: productData['title'] as String,
             description: productData['description'],
             price: double.parse(productData['price'].toString()),
-            imageUrl: productData['imageUrl'],
+            imageUrl: (productData['imageUrl'] as List<dynamic>)
+                .map((element) => element.toString())
+                .toList(),
             isFavorite:
                 favoriteData == null ? false : favoriteData[productId] ?? false,
           ),
