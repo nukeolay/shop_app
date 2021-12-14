@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart.dart';
@@ -134,66 +136,68 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            height: 50.0,
-            color: Colors.blueGrey,
-          ),
-          AnimatedOpacity(
-            duration: const Duration(milliseconds: 300),
-            opacity: _opacity,
-            onEnd: () => setState(() {
-              _opacity = 1.0;
-              if (_removeItem) {
-                cart.removeSingleItem(
-                  productId,
-                );
-                _removeItem = false;
-              }
-              if (_addItem) {
-                cart.addItem(
-                  productId,
-                  loadedProduct.price,
-                  loadedProduct.title,
-                );
-                _addItem = false;
-              }
-            }),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                cart.productQuantity(productId) > 0
-                    ? GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        child: const SizedBox(
-                          width: 60,
-                          height: 40,
-                          child: Icon(
-                            Icons.remove,
-                            size: 30,
-                            color: Colors.white,
-                          ),
+      bottomNavigationBar: Container(
+        color: Colors.blueGrey,
+        padding: EdgeInsets.all(Platform.isIOS ? 4.0 : 0.0),
+        height: 50,
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 300),
+          opacity: _opacity,
+          onEnd: () => setState(() {
+            _opacity = 1.0;
+            if (_removeItem) {
+              cart.removeSingleItem(
+                productId,
+              );
+              _removeItem = false;
+            }
+            if (_addItem) {
+              cart.addItem(
+                productId,
+                loadedProduct.price,
+                loadedProduct.title,
+              );
+              _addItem = false;
+            }
+          }),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (cart.productQuantity(productId) > 0)
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  child: const SizedBox(
+                    width: 60,
+                    height: 40,
+                    child: Icon(
+                      Icons.remove,
+                      size: 30,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      _opacity = 0.0;
+                      _removeItem = true;
+                    });
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Товар удален из корзины',
                         ),
-                        onTap: () {
-                          setState(() {
-                            _opacity = 0.0;
-                            _removeItem = true;
-                          });
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Товар удален из корзины',
-                              ),
-                              duration: Duration(seconds: 1),
-                            ),
-                          );
-                        },
-                      )
-                    : const SizedBox(
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                  },
+                ),
+              GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                child: Row(
+                  children: [
+                    if (cart.productQuantity(productId) == 0)
+                      const SizedBox(
                         width: 40,
                         height: 40,
                         child: Icon(
@@ -201,52 +205,47 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           color: Colors.white,
                         ),
                       ),
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  child: Row(
-                    children: [
-                      Text(
-                        cart.productQuantity(productId) > 0
-                            ? '${cart.productQuantity(productId)} x ${loadedProduct.price} ₽'
-                            : '${loadedProduct.price} ₽',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
+                    Text(
+                      cart.productQuantity(productId) > 0
+                          ? '${cart.productQuantity(productId)} x ${loadedProduct.price} ₽'
+                          : '${loadedProduct.price} ₽',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
+                    ),
+                    if (cart.productQuantity(productId) > 0)
+                      const SizedBox(
+                        width: 60,
+                        height: 40,
+                        child: Icon(
+                          Icons.add,
+                          size: 30,
                           color: Colors.white,
-                          fontSize: 20,
                         ),
                       ),
-                      if (cart.productQuantity(productId) > 0)
-                        const SizedBox(
-                          width: 60,
-                          height: 40,
-                          child: Icon(
-                            Icons.add,
-                            size: 30,
-                            color: Colors.white,
-                          ),
-                        ),
-                    ],
-                  ),
-                  onTap: () {
-                    setState(() {
-                      _opacity = 0.0;
-                      _addItem = true;
-                    });
-                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Товар добавлен в корзину',
-                        ),
-                        duration: Duration(seconds: 1),
+                  ],
+                ),
+                onTap: () {
+                  setState(() {
+                    _opacity = 0.0;
+                    _addItem = true;
+                  });
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Товар добавлен в корзину',
                       ),
-                    );
-                  },
-                )
-              ],
-            ),
+                      duration: Duration(seconds: 1),
+                    ),
+                  );
+                },
+              )
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
