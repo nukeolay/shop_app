@@ -18,6 +18,10 @@ class Products with ChangeNotifier {
     return [..._items];
   }
 
+  void deleteUserData() {
+    _items = [];
+  }
+
   List<Product> get favoriteItems {
     return _items.where((product) => product.isFavorite).toList();
   }
@@ -63,9 +67,9 @@ class Products with ChangeNotifier {
                 favoriteData == null ? false : favoriteData[productId] ?? false,
           ),
         );
-        _items = loadedProducts;
-        notifyListeners();
       });
+      _items = loadedProducts;
+      notifyListeners();
     } catch (error) {
       rethrow;
     }

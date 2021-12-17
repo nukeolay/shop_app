@@ -30,6 +30,10 @@ class Orders with ChangeNotifier {
     return [..._orders];
   }
 
+  void deleteUserData() {
+    _orders = [];
+  }
+
   Future<void> fetchAndSetOrders() async {
     final Uri url = Uri.https(
       'shop-app-demo-udemy-default-rtdb.firebaseio.com',
@@ -42,6 +46,8 @@ class Orders with ChangeNotifier {
 
       final Map<String, dynamic>? extractedData = jsonDecode(response.body);
       if (extractedData == null) {
+        // _orders = [];
+        // notifyListeners();
         return;
       }
       extractedData.forEach(
@@ -49,14 +55,14 @@ class Orders with ChangeNotifier {
           loadedOrders.add(
             OrderItem(
               id: orderId,
-              amount: orderData['amount'],
+              amount: double.parse(orderData['amount'].toString()),
               dateTime: DateTime.parse(
                 orderData['dateTime'],
               ),
               products: (orderData['products'] as List<dynamic>)
                   .map((item) => CartItem(
                         id: item['id'],
-                        price: item['price'],
+                        price: double.parse(item['price'].toString()),
                         quantity: item['quantity'],
                         title: item['title'],
                       ))

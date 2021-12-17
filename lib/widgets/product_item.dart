@@ -112,7 +112,7 @@ class ProductItem extends StatelessWidget {
                           ? Badge(
                               value:
                                   cart.productQuantity(product.id).toString(),
-                                  color: Colors.transparent,
+                                  bgColor: Colors.transparent,
                                   top: 9,
                                   right: 5,
                               child: const Icon(

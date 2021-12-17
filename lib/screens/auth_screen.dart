@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/http_exception.dart';
 import '../providers/auth.dart';
 
-enum authMode { Signup, Login }
+enum authMode { signup, login }
 
 class AuthScreen extends StatelessWidget {
   static const routeName = '/auth';
@@ -71,7 +71,7 @@ class AuthCard extends StatefulWidget {
 class _AuthCardState extends State<AuthCard>
     with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  authMode _authMode = authMode.Login;
+  authMode _authMode = authMode.login;
   final Map<String?, String?> _authData = {
     'email': '',
     'password': '',
@@ -81,6 +81,8 @@ class _AuthCardState extends State<AuthCard>
   late AnimationController _controller;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _opacityAnimation;
+
+  final _passwordFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -112,6 +114,7 @@ class _AuthCardState extends State<AuthCard>
   @override
   void dispose() {
     _controller.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -157,7 +160,7 @@ class _AuthCardState extends State<AuthCard>
       _isLoading = true;
     });
     try {
-      if (_authMode == authMode.Login) {
+      if (_authMode == authMode.login) {
         // Log user in
         await Provider.of<Auth>(context, listen: false).login(
           _authData['email']!,
@@ -194,14 +197,14 @@ class _AuthCardState extends State<AuthCard>
   }
 
   void _switchAuthMode() {
-    if (_authMode == authMode.Login) {
+    if (_authMode == authMode.login) {
       setState(() {
-        _authMode = authMode.Signup;
+        _authMode = authMode.signup;
       });
       _controller.forward();
     } else {
       setState(() {
-        _authMode = authMode.Login;
+        _authMode = authMode.login;
       });
       _controller.reverse();
     }
@@ -218,9 +221,9 @@ class _AuthCardState extends State<AuthCard>
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.linear,
-        height: _authMode == authMode.Signup ? 320 : 260,
-        constraints:
-            BoxConstraints(minHeight: _authMode == authMode.Signup ? 320 : 260),
+        // height: _authMode == authMode.Signup ? 320 : 260,
+        // constraints:
+        //     BoxConstraints(minHeight: _authMode == authMode.Signup ? 320 : 260),
         width: deviceSize.width * 0.75,
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -231,22 +234,25 @@ class _AuthCardState extends State<AuthCard>
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 TextFormField(
-                  decoration: const InputDecoration(labelText: 'E-Mail'),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || !value.contains('@')) {
-                      return 'Некорректный e-mail!';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _authData['email'] = value;
-                  },
-                ),
+                    decoration: const InputDecoration(labelText: 'E-Mail'),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || !value.contains('@')) {
+                        return 'Некорректный e-mail!';
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      _authData['email'] = value;
+                    },
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(_passwordFocusNode);
+                    }),
                 TextFormField(
                   decoration: const InputDecoration(labelText: 'Пароль'),
                   obscureText: true,
                   controller: _passwordController,
+                  focusNode: _passwordFocusNode,
                   validator: (value) {
                     if (value == null || value.length < 5) {
                       return 'Пароль слишком короткий!';
@@ -255,12 +261,15 @@ class _AuthCardState extends State<AuthCard>
                   onSaved: (value) {
                     _authData['password'] = value;
                   },
+                  onFieldSubmitted: (_) {
+                    _submit();
+                  },
                 ),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   constraints: BoxConstraints(
-                    minHeight: _authMode == authMode.Signup ? 60 : 0,
-                    maxHeight: _authMode == authMode.Signup ? 120 : 0,
+                    minHeight: _authMode == authMode.signup ? 60 : 0,
+                    maxHeight: _authMode == authMode.signup ? 120 : 0,
                   ),
                   curve: Curves.linear,
                   child: FadeTransition(
@@ -268,11 +277,11 @@ class _AuthCardState extends State<AuthCard>
                     child: SlideTransition(
                       position: _slideAnimation,
                       child: TextFormField(
-                        enabled: _authMode == authMode.Signup,
+                        enabled: _authMode == authMode.signup,
                         decoration: const InputDecoration(
                             labelText: 'Подтвердите пароль'),
                         obscureText: true,
-                        validator: _authMode == authMode.Signup
+                        validator: _authMode == authMode.signup
                             ? (value) {
                                 if (value != _passwordController.text) {
                                   return 'Пароли не совпадают!';
@@ -290,7 +299,7 @@ class _AuthCardState extends State<AuthCard>
                   const CircularProgressIndicator()
                 else
                   RaisedButton(
-                    child: Text(_authMode == authMode.Login
+                    child: Text(_authMode == authMode.login
                         ? 'ВОЙТИ'
                         : 'ЗАРЕГИСТРИРОВАТЬСЯ'),
                     onPressed: _submit,
@@ -307,7 +316,7 @@ class _AuthCardState extends State<AuthCard>
                 ),
                 FlatButton(
                   child: Text(
-                      _authMode == authMode.Login ? 'РЕГИСТРАЦИЯ' : 'ВХОД'),
+                      _authMode == authMode.login ? 'РЕГИСТРАЦИЯ' : 'ВХОД'),
                   onPressed: _switchAuthMode,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 30.0, vertical: 4),

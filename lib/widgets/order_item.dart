@@ -27,7 +27,10 @@ class _OrderItemState extends State<OrderItem> {
         margin: const EdgeInsets.all(10),
         child: Column(
           children: [
-            InkWell(
+            ListTile(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
               onTap: () {
                 setState(
                   () {
@@ -35,14 +38,12 @@ class _OrderItemState extends State<OrderItem> {
                   },
                 );
               },
-              child: ListTile(
-                title: Text('${widget.order.amount.toStringAsFixed(1)} ₽'),
-                subtitle: Text(
-                  DateFormat('dd.MM.yyyy hh:mm').format(widget.order.dateTime),
-                ),
-                trailing:
-                    Icon(_isExpanded ? Icons.expand_less : Icons.expand_more),
+              title: Text('${widget.order.amount.toStringAsFixed(1)} ₽'),
+              subtitle: Text(
+                DateFormat('dd.MM.yyyy hh:mm').format(widget.order.dateTime),
               ),
+              trailing:
+                  Icon(_isExpanded ? Icons.expand_less : Icons.expand_more),
             ),
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
@@ -58,11 +59,15 @@ class _OrderItemState extends State<OrderItem> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(product.title,
+                                Expanded(
+                                  child: Text(
+                                    product.title,
                                     style: const TextStyle(
                                       fontSize: 18,
-                                      //fontWeight: FontWeight.bold
-                                    )),
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
                                 Text('${product.quantity} x ${product.price} ₽',
                                     style: const TextStyle(
                                         fontSize: 18, color: Colors.grey)),

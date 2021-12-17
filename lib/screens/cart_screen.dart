@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../widgets/app_drawer.dart';
+import '../widgets/empty.dart';
+import '../widgets/custom_navigation_bar.dart';
 import '../providers/orders.dart';
 import '../providers/cart.dart' show Cart;
 import '../widgets/cart_item.dart';
@@ -19,60 +20,65 @@ class _CartScreenState extends State<CartScreen> {
     Cart cart = Provider.of<Cart>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Корзина'),
-      ),
-      drawer: const AppDrawer(),
-      body: Column(
-        children: [
-          Card(
-            elevation: 0,
-            color: Colors.grey.shade100,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            margin: const EdgeInsets.all(15),
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Сумма',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  const Spacer(),
-                  Chip(
-                    label: Text(
-                      '${cart.totalAmount.toStringAsFixed(1)} ₽',
-                      style: TextStyle(
-                          color: Theme.of(context)
-                              .primaryTextTheme
-                              .headline6!
-                              .color),
+      body: SafeArea(
+        child: cart.totalAmount == 0
+            ? const EmptyWidget(
+                emptyIcon: Icons.shopping_bag_outlined,
+                emptyText: 'Корзина пуста',
+              )
+            : SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    Card(
+                      elevation: 0,
+                      color: Colors.grey.shade100,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      margin: const EdgeInsets.all(15),
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Сумма',
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            const Spacer(),
+                            Chip(
+                              label: Text(
+                                '${cart.totalAmount.toStringAsFixed(1)} ₽',
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .primaryTextTheme
+                                        .headline6!
+                                        .color),
+                              ),
+                              backgroundColor: Theme.of(context).primaryColor,
+                            ),
+                            OrderButton(cart),
+                          ],
+                        ),
+                      ),
                     ),
-                    backgroundColor: Theme.of(context).primaryColor,
-                  ),
-                  OrderButton(cart),
-                ],
+                    const SizedBox(height: 10),
+                    ...cart.cartItems!.entries
+                        .map(
+                          (item) => CartItem(
+                              id: item.value.id,
+                              productId: item.key,
+                              title: item.value.title,
+                              quantity: item.value.quantity,
+                              price: item.value.price),
+                        )
+                        .toList(),
+                  ],
+                ),
               ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              itemCount: cart.cartItems!.length,
-              itemBuilder: (ctx, index) => CartItem(
-                  id: cart.cartItems!.values.toList()[index].id,
-                  productId: cart.cartItems!.keys.toList()[index],
-                  title: cart.cartItems!.values.toList()[index].title,
-                  quantity: cart.cartItems!.values.toList()[index].quantity,
-                  price: cart.cartItems!.values.toList()[index].price),
-            ),
-          ),
-        ],
       ),
+      bottomNavigationBar: const CustomNavigationBar(),
     );
   }
 }
@@ -91,7 +97,7 @@ class _OrderButtonState extends State<OrderButton> {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: (widget.cart.totalAmount == 0 || _isLoading)
+      onPressed: (_isLoading)
           ? null
           : () async {
               setState(() {

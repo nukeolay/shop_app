@@ -5,7 +5,7 @@ import '../providers/product.dart';
 
 class EditProductScreen extends StatefulWidget {
   const EditProductScreen({Key? key}) : super(key: key);
-  static const String routeName = '/edit-product-screen';
+  static const String routeName = '/edit-product';
 
   @override
   _EditProductScreenState createState() => _EditProductScreenState();
@@ -78,7 +78,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
       if ((!value.startsWith('http') && !value.startsWith('https')) ||
           (!value.endsWith('.png') &&
               !value.endsWith('.jpg') &&
-              !value.endsWith('.jpeg'))) {
+              !value.endsWith('.jpeg') &&
+              !value.endsWith('.gif'))) {
         return;
       } else {
         setState(() {});
@@ -285,7 +286,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                               }
                               if (!value.endsWith('.png') &&
                                   !value.endsWith('.jpg') &&
-                                  !value.endsWith('.jpeg')) {
+                                  !value.endsWith('.jpeg') &&
+                                  !value.endsWith('.gif')) {
                                 return 'Введите ссылку изображения.';
                               }
                               return null;
@@ -312,77 +314,3 @@ class _EditProductScreenState extends State<EditProductScreen> {
     );
   }
 }
-
-// class AddPhoto extends StatelessWidget {
-//   AddPhoto({required this.editedProduct, Key? key}) : super(key: key);
-//   Product editedProduct;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Row(
-//       crossAxisAlignment: CrossAxisAlignment.end,
-//       children: [
-//         Container(
-//           margin: const EdgeInsets.only(
-//             top: 8,
-//             right: 10,
-//           ),
-//           decoration: BoxDecoration(
-//             border: Border.all(
-//               width: 1,
-//               color: Colors.grey,
-//             ),
-//           ),
-//           width: 100,
-//           height: 100,
-//           child: _imageUrlController.text.isEmpty
-//               ? const Center(
-//                   child: Icon(Icons.image_not_supported_outlined),
-//                 )
-//               : FittedBox(
-//                   fit: BoxFit.scaleDown,
-//                   child: Image.network(_imageUrlController.text),
-//                 ),
-//         ),
-//         Expanded(
-//           child: TextFormField(
-//             decoration:
-//                 const InputDecoration(labelText: 'Ссылка на изображение'),
-//             keyboardType: TextInputType.url,
-//             textInputAction: TextInputAction.done,
-//             controller: _imageUrlController,
-//             focusNode: _imageUrlFocusNode,
-//             onEditingComplete: () {
-//               setState(() {});
-//             },
-//             onFieldSubmitted: (_) => _saveForm(),
-//             validator: (value) {
-//               if (value!.isEmpty) {
-//                 return 'Введите ссылку.';
-//               }
-//               if (!value.startsWith('http') && !value.startsWith('https')) {
-//                 return 'Введите ссылку.';
-//               }
-//               if (!value.endsWith('.png') &&
-//                   !value.endsWith('.jpg') &&
-//                   !value.endsWith('.jpeg')) {
-//                 return 'Введите ссылку изображения.';
-//               }
-//               return null;
-//             },
-//             onSaved: (value) {
-//               _editedProduct = Product(
-//                 id: _editedProduct.id,
-//                 title: _editedProduct.title,
-//                 price: _editedProduct.price,
-//                 description: _editedProduct.description,
-//                 imageUrl: '$value',
-//                 isFavorite: _editedProduct.isFavorite,
-//               );
-//             },
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }

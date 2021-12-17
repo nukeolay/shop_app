@@ -21,6 +21,10 @@ class Cart extends ChangeNotifier {
     return {...?_items};
   }
 
+  void deleteUserData() {
+    _items = {};
+  }
+
   int get itemCount {
     int count = 0;
     _items!.forEach(

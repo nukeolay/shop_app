@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import '../screens/home_screen.dart';
 import './helpers/custom_route.dart';
 import './providers/auth.dart';
 import './screens/edit_product_screen.dart';
 import './screens/orders_screen.dart';
-import './screens/user_products_screen.dart';
+import 'screens/manage_products_screen.dart';
 import './providers/orders.dart';
 import './screens/cart_screen.dart';
 import './providers/cart.dart';
 import './providers/products.dart';
 import './screens/product_detail_screen.dart';
-import './screens/products_overview_screen.dart';
+import 'screens/catalog_screen.dart';
 import './screens/auth_screen.dart';
 import './screens/splash_screen.dart';
 import './screens/wishlist_screen.dart';
+import './screens/account_screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -24,7 +26,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
-        const SystemUiOverlayStyle(statusBarColor: Colors.grey));
+      const SystemUiOverlayStyle(statusBarColor: Colors.grey),
+    );
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -73,7 +76,7 @@ class MyApp extends StatelessWidget {
                 const ProgressIndicatorThemeData(color: Colors.blueGrey),
           ),
           home: auth.isAuth
-              ? const ProductsOverviewScreen()
+              ? const HomeScreen()
               : FutureBuilder(
                   future: auth.tryAutologin(),
                   builder: (ctx, authResultSnapshot) =>
@@ -83,14 +86,17 @@ class MyApp extends StatelessWidget {
                           : const AuthScreen(),
                 ),
           routes: {
-            ProductsOverviewScreen.routeName: (ctx) =>
-                const ProductsOverviewScreen(),
+            CatalogScreen.routeName: (ctx) =>
+                const CatalogScreen(),
             WishlistScreen.routeName: (ctx) => const WishlistScreen(),
             ProductDetailScreen.routeName: (ctx) => const ProductDetailScreen(),
             CartScreen.routeName: (ctx) => const CartScreen(),
             OrdersScreen.routeName: (ctx) => const OrdersScreen(),
-            UserProductsScreen.routeName: (ctx) => const UserProductsScreen(),
+            ManageProductsScreen.routeName: (ctx) => const ManageProductsScreen(),
             EditProductScreen.routeName: (ctx) => const EditProductScreen(),
+            AccountScreen.routeName: (ctx) => const AccountScreen(),
+            HomeScreen.routeName: (ctx) => const HomeScreen(),
+            AuthScreen.routeName: (ctx) => const AuthScreen(),
           },
         ),
       ),

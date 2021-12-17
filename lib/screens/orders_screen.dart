@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../widgets/app_drawer.dart';
+import 'package:shop_app/widgets/empty.dart';
 import '../widgets/order_item.dart' as wgt;
 import '../providers/orders.dart';
 
@@ -31,7 +31,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
       appBar: AppBar(
         title: const Text('Мои заказы'),
       ),
-      drawer: const AppDrawer(),
       body: FutureBuilder(
         future: _ordersFuture,
         builder: (ctx, snapshot) {
@@ -39,18 +38,24 @@ class _OrdersScreenState extends State<OrdersScreen> {
             return const Center(child: CircularProgressIndicator());
           } else {
             if (snapshot.error != null) {
-              return const Center(
-                child: Text('Error'),
+              return Center(
+                child: Text('Ошибка: ${snapshot.error}'),
               );
             } else {
-              return Consumer<Orders>(builder: (ctx, orderData, _) {
-                return ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: orderData.orders.length,
-                  itemBuilder: (ctx, index) =>
-                      wgt.OrderItem(orderData.orders[index]),
-                );
-              });
+              return Consumer<Orders>(
+                builder: (ctx, orderData, _) {
+                  return orderData.orders.isEmpty
+                      ? const EmptyWidget(
+                          emptyIcon: Icons.assignment_outlined,
+                          emptyText: "Заказов нет")
+                      : ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: orderData.orders.length,
+                          itemBuilder: (ctx, index) =>
+                              wgt.OrderItem(orderData.orders[index]),
+                        );
+                },
+              );
             }
           }
         },

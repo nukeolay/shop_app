@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart.dart';
@@ -8,7 +6,7 @@ import '../providers/product.dart';
 import '../providers/products.dart';
 
 class ProductDetailScreen extends StatefulWidget {
-  static const String routeName = '/detail-screen';
+  static const String routeName = '/product-detail';
 
   const ProductDetailScreen({Key? key}) : super(key: key);
 

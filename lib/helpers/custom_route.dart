@@ -35,9 +35,6 @@ class CustomPageTransitionBuilder extends PageTransitionsBuilder {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    if (route.settings.name == '/') {
-      return child;
-    }
     return FadeTransition(
       opacity: animation,
       child: child,
