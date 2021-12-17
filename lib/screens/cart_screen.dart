@@ -18,7 +18,6 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     Cart cart = Provider.of<Cart>(context);
-
     return Scaffold(
       body: SafeArea(
         child: cart.totalAmount == 0

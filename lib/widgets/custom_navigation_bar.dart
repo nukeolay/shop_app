@@ -106,7 +106,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
               label: "Вишлист",
             ),
 
-            /// Profile
+            /// Account
             const BottomNavigationBarItem(
               icon: Icon(Icons.person),
               label: "Аккаунт",

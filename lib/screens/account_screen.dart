@@ -21,7 +21,7 @@ class _AccountScreenState extends State<AccountScreen> {
     Navigator.of(context).pushNamed(OrdersScreen.routeName);
   }
 
-  void _goToEditProductsScreen() {
+  void _goToManageProductsScreen() {
     Navigator.of(context).pushNamed(ManageProductsScreen.routeName);
   }
 
@@ -35,13 +35,14 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final email = Provider.of<Auth>(context, listen: false).email;
     return Scaffold(
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
-            Text('Управление аккаунтом'),
-            Icon(Icons.account_circle),
+          children: [
+            Text(email!),
+            const Icon(Icons.account_circle),
           ],
         ),
       ),
@@ -58,7 +59,7 @@ class _AccountScreenState extends State<AccountScreen> {
               AccountMenuButton(
                 buttonIcon: Icons.edit_outlined,
                 buttonText: 'Управление товарами',
-                buttonAction: _goToEditProductsScreen,
+                buttonAction: _goToManageProductsScreen,
               ),
               AccountMenuButton(
                 buttonIcon: Icons.exit_to_app,

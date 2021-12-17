@@ -5,14 +5,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
+import '../models/user.dart';
 import '../models/http_exception.dart';
 
 class Auth with ChangeNotifier {
-  late String? _token;
-  late DateTime? _expireDate;
+  static const String apiKey = 'AIzaSyB8KVWC48jKOJmcyiJclJ294njNYG8NS8M';
+
   late String? _userId;
+  late String? _email;
+
+  //late User _user;
+
+  late String? _token;
   late String? _refreshToken;
+  late DateTime? _expireDate;
   Timer? _authTimer;
 
   bool get isAuth {
@@ -34,9 +40,11 @@ class Auth with ChangeNotifier {
 
   String? get userId => _userId;
 
+  String? get email => _email;
+
   Future<void> _refreshAuth() async {
-    final url = Uri.parse(
-        'https://securetoken.googleapis.com/v1/token?key=AIzaSyB8KVWC48jKOJmcyiJclJ294njNYG8NS8M');
+    final url =
+        Uri.parse('https://securetoken.googleapis.com/v1/token?key=$apiKey');
     try {
       final response = await http.post(
         url,
@@ -65,9 +73,9 @@ class Auth with ChangeNotifier {
         {
           'token': _token,
           'userId': _userId,
-                    'refreshToken': _refreshToken,
+          'email': _email,
+          'refreshToken': _refreshToken,
           'expireDate': _expireDate!.toIso8601String(),
-
         },
       );
       prefs.setString('userData', userData);
@@ -76,10 +84,12 @@ class Auth with ChangeNotifier {
     }
   }
 
+  Future<void> setUserData(User user) async {}
+
   Future<void> _authenticate(
       String email, String password, String urlSegment) async {
     final url = Uri.parse(
-        'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=AIzaSyB8KVWC48jKOJmcyiJclJ294njNYG8NS8M');
+        'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=$apiKey');
     try {
       final response = await http.post(
         url,
@@ -97,6 +107,7 @@ class Auth with ChangeNotifier {
       }
       _token = responseData['idToken'];
       _userId = responseData['localId'];
+      _email = responseData['email'];
       _refreshToken = responseData['refreshToken'];
       _expireDate = DateTime.now().add(
         Duration(
@@ -110,6 +121,7 @@ class Auth with ChangeNotifier {
         {
           'token': _token,
           'userId': _userId,
+          'email': email,
           'refreshToken': _refreshToken,
           'expireDate': _expireDate!.toIso8601String(),
         },
@@ -141,6 +153,7 @@ class Auth with ChangeNotifier {
       } else {
         _token = extractedUserData['token'];
         _userId = extractedUserData['userId'];
+        _email = extractedUserData['email'];
         _refreshToken = extractedUserData['refreshToken'];
         _expireDate = expireDate;
         _autoLogout();
@@ -153,6 +166,7 @@ class Auth with ChangeNotifier {
   Future<void> logout() async {
     _token = null;
     _userId = null;
+    _email = null;
     _refreshToken = null;
     _expireDate = null;
     if (_authTimer != null) {
@@ -169,7 +183,6 @@ class Auth with ChangeNotifier {
       _authTimer!.cancel();
     }
     final timeToExpiry = _expireDate!.difference(DateTime.now()).inSeconds;
-    //const timeToExpiry = 20;
     _authTimer = Timer(Duration(seconds: timeToExpiry), _refreshAuth);
   }
 }
