@@ -189,6 +189,7 @@ class _AuthCardState extends State<AuthCard>
       _showErrorDialog(errorMessage);
     } catch (error) {
       const errorMessage = 'Ошибка. Попробуйте позже';
+      print(error);
       _showErrorDialog(errorMessage);
     }
     setState(() {
@@ -221,9 +222,6 @@ class _AuthCardState extends State<AuthCard>
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.linear,
-        // height: _authMode == authMode.Signup ? 320 : 260,
-        // constraints:
-        //     BoxConstraints(minHeight: _authMode == authMode.Signup ? 320 : 260),
         width: deviceSize.width * 0.75,
         padding: const EdgeInsets.all(16.0),
         child: Form(

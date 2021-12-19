@@ -5,17 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../constants/api_const.dart';
 import '../models/user.dart';
 import '../models/http_exception.dart';
 
 class Auth with ChangeNotifier {
-  static const String apiKey = 'AIzaSyB8KVWC48jKOJmcyiJclJ294njNYG8NS8M';
-
-  late String? _userId;
-  late String? _email;
-
-  //late User _user;
-
+  final _user = User(userId: '', email: '', isAdmin: false);
   late String? _token;
   late String? _refreshToken;
   late DateTime? _expireDate;
@@ -38,13 +33,12 @@ class Auth with ChangeNotifier {
     }
   }
 
-  String? get userId => _userId;
+  String? get userId => _user.userId;
 
-  String? get email => _email;
+  String? get email => _user.email;
 
   Future<void> _refreshAuth() async {
-    final url =
-        Uri.parse('https://securetoken.googleapis.com/v1/token?key=$apiKey');
+    final url = Uri.parse('${Api.refreshToken}?key=${Api.apiKey}');
     try {
       final response = await http.post(
         url,
@@ -72,8 +66,8 @@ class Auth with ChangeNotifier {
       final userData = jsonEncode(
         {
           'token': _token,
-          'userId': _userId,
-          'email': _email,
+          'userId': _user.userId,
+          'email': _user.email,
           'refreshToken': _refreshToken,
           'expireDate': _expireDate!.toIso8601String(),
         },
@@ -87,9 +81,14 @@ class Auth with ChangeNotifier {
   Future<void> setUserData(User user) async {}
 
   Future<void> _authenticate(
-      String email, String password, String urlSegment) async {
-    final url = Uri.parse(
-        'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=$apiKey');
+    String email,
+    String password,
+    String urlSegment,
+  ) async {
+    final url = Uri.parse('$urlSegment?key=${Api.apiKey}');
+
+// если регистрация, то создать в ../users/$userId/разные поля
+
     try {
       final response = await http.post(
         url,
@@ -106,8 +105,8 @@ class Auth with ChangeNotifier {
         throw HttpException(responseData['error']['message']);
       }
       _token = responseData['idToken'];
-      _userId = responseData['localId'];
-      _email = responseData['email'];
+      _user.userId = responseData['localId'];
+      _user.email = responseData['email'];
       _refreshToken = responseData['refreshToken'];
       _expireDate = DateTime.now().add(
         Duration(
@@ -120,7 +119,7 @@ class Auth with ChangeNotifier {
       final userData = jsonEncode(
         {
           'token': _token,
-          'userId': _userId,
+          'userId': _user.userId,
           'email': email,
           'refreshToken': _refreshToken,
           'expireDate': _expireDate!.toIso8601String(),
@@ -133,11 +132,11 @@ class Auth with ChangeNotifier {
   }
 
   Future<void> signUp(String email, String password) async {
-    return _authenticate(email, password, 'signUp');
+    return _authenticate(email, password, Api.register);
   }
 
   Future<void> login(String email, String password) async {
-    return _authenticate(email, password, 'signInWithPassword');
+    return _authenticate(email, password, Api.login);
   }
 
   Future<bool> tryAutologin() async {
@@ -152,8 +151,8 @@ class Auth with ChangeNotifier {
         return false;
       } else {
         _token = extractedUserData['token'];
-        _userId = extractedUserData['userId'];
-        _email = extractedUserData['email'];
+        _user.userId = extractedUserData['userId'];
+        _user.email = extractedUserData['email'];
         _refreshToken = extractedUserData['refreshToken'];
         _expireDate = expireDate;
         _autoLogout();
@@ -165,8 +164,7 @@ class Auth with ChangeNotifier {
 
   Future<void> logout() async {
     _token = null;
-    _userId = null;
-    _email = null;
+    _user.deleteUserData();
     _refreshToken = null;
     _expireDate = null;
     if (_authTimer != null) {
