@@ -3,7 +3,10 @@ import 'package:provider/provider.dart';
 import '../models/http_exception.dart';
 import '../providers/auth.dart';
 
-enum authMode { signup, login }
+enum authMode {
+  signup,
+  login,
+}
 
 class AuthScreen extends StatelessWidget {
   static const routeName = '/auth';
@@ -189,7 +192,6 @@ class _AuthCardState extends State<AuthCard>
       _showErrorDialog(errorMessage);
     } catch (error) {
       const errorMessage = 'Ошибка. Попробуйте позже';
-      print(error);
       _showErrorDialog(errorMessage);
     }
     setState(() {
