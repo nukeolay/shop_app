@@ -35,24 +35,33 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           slivers: [
             SliverAppBar(
               actions: [
-                IconButton(
-                  splashRadius: 1,
-                  icon: Icon(
-                    loadedProduct.isFavorite
-                        ? Icons.favorite
-                        : Icons.favorite_border,
-                    color: loadedProduct.isFavorite
-                        ? Colors.blueGrey
-                        : Colors.grey,
+                GestureDetector(
+                  // splashRadius: 1,
+                  child: Container(
+                    width: 60.0,
+                    // height: 50.0,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(16.0)),
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                    child: Icon(
+                      loadedProduct.isFavorite
+                          ? Icons.favorite_rounded
+                          : Icons.favorite_border_rounded,
+                      color: loadedProduct.isFavorite
+                          ? Colors.blueGrey
+                          : Colors.blueGrey,
+                    ),
                   ),
-                  onPressed: () async {
+                  onTap: () async {
                     try {
                       setState(() {});
                       await loadedProduct.toggleFavorite(
-                        auth.token,
+                        // auth.token,
                         auth.userId,
                       );
-
                       ScaffoldMessenger.of(context).hideCurrentSnackBar();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -80,17 +89,29 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
               flexibleSpace: FlexibleSpaceBar(
                 centerTitle: true,
-                titlePadding: const EdgeInsets.all(0.0),
+                titlePadding: EdgeInsets.zero,
                 title: Container(
                   width: double.infinity,
-                  color: Colors.white.withOpacity(0.5),
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text(
-                      loadedProduct.title,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.blueGrey[800]),
-                    ),
+                  height: 60,
+                  color: Colors.black.withOpacity(0.5),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24.0,
+                          vertical: 4.0,
+                        ),
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
+                            loadedProduct.title,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 background: PageView.builder(
@@ -104,8 +125,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             fit: BoxFit.cover,
                           ),
                         )
-                      : Image.network(
-                          loadedProduct.imageUrl[index],
+                      : FadeInImage(
+                          placeholder:
+                              const AssetImage('assets/images/placeholder.jpg'),
+                          image: NetworkImage(
+                            loadedProduct.imageUrl[index],
+                          ),
                           fit: BoxFit.cover,
                         ),
                 ),
@@ -206,8 +231,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         ),
                       Text(
                         cart.productQuantity(productId) > 0
-                            ? '${cart.productQuantity(productId)} x ${loadedProduct.price} ₽'
-                            : '${loadedProduct.price} ₽',
+                            ? '${cart.productQuantity(productId)} x ${loadedProduct.price.toStringAsFixed(2)} ₽'
+                            : '${loadedProduct.price.toStringAsFixed(2)} ₽',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: Colors.white,

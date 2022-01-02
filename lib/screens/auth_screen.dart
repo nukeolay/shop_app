@@ -41,13 +41,11 @@ class AuthScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Flexible(
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 20.0),
-                      padding: const EdgeInsets.all(20.0),
-                      child: const Image(
-                        image: AssetImage('assets/images/logo_named.png'),
-                      ),
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 20.0),
+                    padding: const EdgeInsets.all(20.0),
+                    child: const Image(
+                      image: AssetImage('assets/images/logo_named.png'),
                     ),
                   ),
                   Flexible(
@@ -78,6 +76,7 @@ class _AuthCardState extends State<AuthCard>
   final Map<String?, String?> _authData = {
     'email': '',
     'password': '',
+    'name': '',
   };
   var _isLoading = false;
   final _passwordController = TextEditingController();
@@ -85,7 +84,9 @@ class _AuthCardState extends State<AuthCard>
   late Animation<Offset> _slideAnimation;
   late Animation<double> _opacityAnimation;
 
+  final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
+  final _passwordConfirmFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -117,7 +118,9 @@ class _AuthCardState extends State<AuthCard>
   @override
   void dispose() {
     _controller.dispose();
+    _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
+    _passwordConfirmFocusNode.dispose();
     super.dispose();
   }
 
@@ -172,8 +175,9 @@ class _AuthCardState extends State<AuthCard>
       } else {
         // Sign user up
         await Provider.of<Auth>(context, listen: false).signUp(
-          _authData['email']!,
-          _authData['password']!,
+          email: _authData['email']!,
+          password: _authData['password']!,
+          name: _authData['name']!,
         );
       }
     } on HttpException catch (error) {
@@ -227,27 +231,65 @@ class _AuthCardState extends State<AuthCard>
         width: deviceSize.width * 0.75,
         padding: const EdgeInsets.all(16.0),
         child: Form(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           key: _formKey,
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  constraints: BoxConstraints(
+                    minHeight: 0,
+                    maxHeight: _authMode == authMode.signup ? 80 : 0,
+                  ),
+                  curve: Curves.linear,
+                  child: _authMode == authMode.signup
+                      ? FadeTransition(
+                          opacity: _opacityAnimation,
+                          child: SlideTransition(
+                            position: _slideAnimation,
+                            child: TextFormField(
+                              enabled: _authMode == authMode.signup,
+                              decoration:
+                                  const InputDecoration(labelText: 'Имя'),
+                              onSaved: (value) {
+                                _authData['name'] = value;
+                              },
+                              validator: _authMode == authMode.signup
+                                  ? (value) {
+                                      if (value == null || value == '') {
+                                        return 'Не указано имя пользователя!';
+                                      }
+                                    }
+                                  : null,
+                              onFieldSubmitted: (_) {
+                                FocusScope.of(context)
+                                    .requestFocus(_emailFocusNode);
+                              },
+                            ),
+                          ),
+                        )
+                      : null,
+                ),
                 TextFormField(
-                    decoration: const InputDecoration(labelText: 'E-Mail'),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value == null || !value.contains('@')) {
-                        return 'Некорректный e-mail!';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      _authData['email'] = value;
-                    },
-                    onFieldSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(_passwordFocusNode);
-                    }),
+                  decoration: const InputDecoration(labelText: 'E-Mail'),
+                  focusNode: _emailFocusNode,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || !value.contains('@')) {
+                      return 'Некорректный e-mail!';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _authData['email'] = value;
+                  },
+                  onFieldSubmitted: (_) {
+                    FocusScope.of(context).requestFocus(_passwordFocusNode);
+                  },
+                ),
                 TextFormField(
                   decoration: const InputDecoration(labelText: 'Пароль'),
                   obscureText: true,
@@ -262,35 +304,43 @@ class _AuthCardState extends State<AuthCard>
                     _authData['password'] = value;
                   },
                   onFieldSubmitted: (_) {
-                    _submit();
+                    _authMode == authMode.signup
+                        ? FocusScope.of(context)
+                            .requestFocus(_passwordConfirmFocusNode)
+                        : _submit();
                   },
                 ),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   constraints: BoxConstraints(
-                    minHeight: _authMode == authMode.signup ? 60 : 0,
-                    maxHeight: _authMode == authMode.signup ? 120 : 0,
+                    minHeight: 0,
+                    maxHeight: _authMode == authMode.signup ? 80 : 0,
                   ),
                   curve: Curves.linear,
-                  child: FadeTransition(
-                    opacity: _opacityAnimation,
-                    child: SlideTransition(
-                      position: _slideAnimation,
-                      child: TextFormField(
-                        enabled: _authMode == authMode.signup,
-                        decoration: const InputDecoration(
-                            labelText: 'Подтвердите пароль'),
-                        obscureText: true,
-                        validator: _authMode == authMode.signup
-                            ? (value) {
-                                if (value != _passwordController.text) {
-                                  return 'Пароли не совпадают!';
-                                }
-                              }
-                            : null,
-                      ),
-                    ),
-                  ),
+                  child: _authMode == authMode.signup
+                      ? FadeTransition(
+                          opacity: _opacityAnimation,
+                          child: SlideTransition(
+                            position: _slideAnimation,
+                            child: TextFormField(
+                                enabled: _authMode == authMode.signup,
+                                focusNode: _passwordConfirmFocusNode,
+                                decoration: const InputDecoration(
+                                    labelText: 'Подтвердите пароль'),
+                                obscureText: true,
+                                validator: _authMode == authMode.signup
+                                    ? (value) {
+                                        if (value != _passwordController.text) {
+                                          return 'Пароли не совпадают!';
+                                        }
+                                      }
+                                    : null,
+                                onFieldSubmitted: (_) {
+                                  _submit();
+                                }),
+                          ),
+                        )
+                      : null,
                 ),
                 const SizedBox(
                   height: 20,
@@ -315,8 +365,9 @@ class _AuthCardState extends State<AuthCard>
                   height: 5,
                 ),
                 FlatButton(
-                  child: Text(
-                      _authMode == authMode.login ? 'РЕГИСТРАЦИЯ' : 'ВХОД'),
+                  child: Text(_authMode == authMode.login
+                      ? 'РЕГИСТРАЦИЯ'
+                      : 'УЖЕ ЕСТЬ АККАУНТ'),
                   onPressed: _switchAuthMode,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 30.0, vertical: 4),

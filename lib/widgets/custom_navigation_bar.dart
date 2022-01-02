@@ -102,7 +102,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
 
             /// Whishlist
             const BottomNavigationBarItem(
-              icon: Icon(Icons.favorite),
+              icon: Icon(Icons.favorite_rounded),
               label: "Вишлист",
             ),
 

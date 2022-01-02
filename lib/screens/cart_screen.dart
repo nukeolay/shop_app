@@ -15,67 +15,90 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  bool _isLoading = false;
+  bool _isInit = true;
+
+  @override
+  void didChangeDependencies() async {
+    if (_isInit) {
+      setState(() {
+        _isLoading = true;
+      });
+      await Provider.of<Cart>(context).fetchAndSetCart();
+      setState(() {
+        _isLoading = false;
+      });
+    }
+    _isInit = false;
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     Cart cart = Provider.of<Cart>(context);
     return Scaffold(
       body: SafeArea(
-        child: cart.totalAmount == 0
-            ? const EmptyWidget(
-                emptyIcon: Icons.shopping_bag_outlined,
-                emptyText: 'Корзина пуста',
+        child: _isLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
               )
-            : SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  children: [
-                    Card(
-                      elevation: 0,
-                      color: Colors.grey.shade100,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      margin: const EdgeInsets.all(15),
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Сумма',
-                              style: TextStyle(fontSize: 20),
+            : cart.totalAmount == 0
+                ? const EmptyWidget(
+                    emptyIcon: Icons.shopping_bag_outlined,
+                    emptyText: 'Корзина пуста',
+                  )
+                : SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        Card(
+                          elevation: 0,
+                          color: Colors.grey.shade100,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          margin: const EdgeInsets.all(15),
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Сумма',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                const Spacer(),
+                                Chip(
+                                  label: Text(
+                                    '${cart.totalAmount.toStringAsFixed(2)} ₽',
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .primaryTextTheme
+                                            .headline6!
+                                            .color),
+                                  ),
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor,
+                                ),
+                                OrderButton(cart),
+                              ],
                             ),
-                            const Spacer(),
-                            Chip(
-                              label: Text(
-                                '${cart.totalAmount.toStringAsFixed(1)} ₽',
-                                style: TextStyle(
-                                    color: Theme.of(context)
-                                        .primaryTextTheme
-                                        .headline6!
-                                        .color),
-                              ),
-                              backgroundColor: Theme.of(context).primaryColor,
-                            ),
-                            OrderButton(cart),
-                          ],
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 10),
+                        ...cart.cartItems.entries
+                            .map(
+                              (item) => CartItem(
+                                  // id: item.value.id,
+                                  productId: item.key,
+                                  title: item.value.title,
+                                  quantity: item.value.quantity,
+                                  price: item.value.price),
+                            )
+                            .toList(),
+                      ],
                     ),
-                    const SizedBox(height: 10),
-                    ...cart.cartItems!.entries
-                        .map(
-                          (item) => CartItem(
-                              id: item.value.id,
-                              productId: item.key,
-                              title: item.value.title,
-                              quantity: item.value.quantity,
-                              price: item.value.price),
-                        )
-                        .toList(),
-                  ],
-                ),
-              ),
+                  ),
       ),
       bottomNavigationBar: const CustomNavigationBar(),
     );
@@ -103,7 +126,7 @@ class _OrderButtonState extends State<OrderButton> {
                 _isLoading = true;
               });
               await Provider.of<Orders>(context, listen: false).addOrder(
-                widget.cart.cartItems!.values.toList(),
+                widget.cart.cartItems.values.toList(),
                 widget.cart.totalAmount,
               );
               setState(() {

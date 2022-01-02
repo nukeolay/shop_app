@@ -35,13 +35,13 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final email = Provider.of<Auth>(context, listen: false).email;
+    final name = Provider.of<Auth>(context, listen: false).name;
     return Scaffold(
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(email!),
+            Text(name),
             const Icon(Icons.account_circle),
           ],
         ),

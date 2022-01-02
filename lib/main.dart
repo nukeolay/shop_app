@@ -30,15 +30,17 @@ class MyApp extends StatelessWidget {
     );
     return MultiProvider(
       providers: [
+        // TODO вынести в отдельный файл как у индуса
         ChangeNotifierProvider(
           create: (ctx) => Auth(),
+          lazy: false,
         ),
         ChangeNotifierProxyProvider<Auth, Products>(
           create: (ctx) => Products(null, '', []),
           update: (ctx, auth, previousProducts) => Products(
             auth.token,
             auth.userId,
-            previousProducts!.items,
+            previousProducts!.products,
           ),
         ),
         ChangeNotifierProxyProvider<Auth, Orders>(
@@ -49,8 +51,14 @@ class MyApp extends StatelessWidget {
             previousOrders!.orders,
           ),
         ),
-        ChangeNotifierProvider(
-          create: (ctx) => Cart(),
+        ChangeNotifierProxyProvider2<Auth, Products, Cart>(
+          lazy: false,
+          create: (ctx) => Cart(null, [], {}),
+          update: (ctx, auth, products, previousCart) => Cart(
+            auth.userId,
+            products.products,
+            previousCart!.cartItems,
+          ),
         ),
       ],
       child: Consumer<Auth>(
@@ -86,13 +94,13 @@ class MyApp extends StatelessWidget {
                           : const AuthScreen(),
                 ),
           routes: {
-            CatalogScreen.routeName: (ctx) =>
-                const CatalogScreen(),
+            CatalogScreen.routeName: (ctx) => const CatalogScreen(),
             WishlistScreen.routeName: (ctx) => const WishlistScreen(),
             ProductDetailScreen.routeName: (ctx) => const ProductDetailScreen(),
             CartScreen.routeName: (ctx) => const CartScreen(),
             OrdersScreen.routeName: (ctx) => const OrdersScreen(),
-            ManageProductsScreen.routeName: (ctx) => const ManageProductsScreen(),
+            ManageProductsScreen.routeName: (ctx) =>
+                const ManageProductsScreen(),
             EditProductScreen.routeName: (ctx) => const EditProductScreen(),
             AccountScreen.routeName: (ctx) => const AccountScreen(),
             HomeScreen.routeName: (ctx) => const HomeScreen(),

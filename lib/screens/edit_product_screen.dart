@@ -258,10 +258,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
                                   child:
                                       Icon(Icons.image_not_supported_outlined),
                                 )
-                              : FittedBox(
+                              : FadeInImage(
+                                  placeholder: const AssetImage(
+                                      'assets/images/placeholder.jpg'),
+                                  image: NetworkImage(
+                                    _imageUrlController.text,
+                                  ),
                                   fit: BoxFit.scaleDown,
-                                  child:
-                                      Image.network(_imageUrlController.text),
                                 ),
                         ),
                         Expanded(

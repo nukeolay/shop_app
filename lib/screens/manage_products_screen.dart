@@ -39,14 +39,14 @@ class ManageProductsScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(8),
                         child: ListView.builder(
                             physics: const BouncingScrollPhysics(),
-                            itemCount: productData.items.length,
+                            itemCount: productData.products.length,
                             itemBuilder: (_, index) => Column(
                                   children: [
                                     UserProductItem(
-                                      id: productData.items[index].id,
-                                      title: productData.items[index].title,
+                                      id: productData.products[index].id,
+                                      title: productData.products[index].title,
                                       imageUrl:
-                                          productData.items[index].imageUrl[0],
+                                          productData.products[index].imageUrl[0],
                                     ),
                                     const Divider()
                                   ],
