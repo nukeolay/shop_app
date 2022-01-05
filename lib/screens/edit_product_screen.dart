@@ -21,7 +21,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
     id: '',
     title: '',
     price: 0,
+    salePrice: 0,
     description: '',
+    category: [],
     imageUrl: [],
   );
 
@@ -29,7 +31,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
     'title': '',
     'description': '',
     'price': '',
+    'salePrice': '',
     'imageUrl': '',
+    'categories': '',
   };
 
   bool _isInit = true;
@@ -53,7 +57,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
           'title': _editedProduct.title,
           'description': _editedProduct.description,
           'price': _editedProduct.price.toString(),
+          'salePrice': _editedProduct.salePrice.toString(),
           'imageUrl': '',
+          'categories': '',
         };
         _imageUrlController.text = _editedProduct.imageUrl[0];
         _isInit = false;
@@ -173,8 +179,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           id: _editedProduct.id,
                           title: '$value',
                           price: _editedProduct.price,
+                          salePrice: _editedProduct.salePrice,
                           description: _editedProduct.description,
                           imageUrl: _editedProduct.imageUrl,
+                          category: _editedProduct.category,
                           isFavorite: _editedProduct.isFavorite,
                         );
                       },
@@ -205,8 +213,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           id: _editedProduct.id,
                           title: _editedProduct.title,
                           price: double.parse(value!),
+                          salePrice: _editedProduct.salePrice,
                           description: _editedProduct.description,
                           imageUrl: _editedProduct.imageUrl,
+                          category: _editedProduct.category,
                           isFavorite: _editedProduct.isFavorite,
                         );
                       },
@@ -231,8 +241,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           id: _editedProduct.id,
                           title: _editedProduct.title,
                           price: _editedProduct.price,
+                          salePrice: _editedProduct.salePrice,
                           description: '$value',
                           imageUrl: _editedProduct.imageUrl,
+                          category: _editedProduct.category,
                           isFavorite: _editedProduct.isFavorite,
                         );
                       },
@@ -301,8 +313,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
                                 id: _editedProduct.id,
                                 title: _editedProduct.title,
                                 price: _editedProduct.price,
+                                salePrice: _editedProduct.salePrice,
                                 description: _editedProduct.description,
                                 imageUrl: _editedProduct.imageUrl,
+                                category: _editedProduct.category,
                                 isFavorite: _editedProduct.isFavorite,
                               );
                             },

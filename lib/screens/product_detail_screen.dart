@@ -28,31 +28,30 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final cart = Provider.of<Cart>(context);
     final scaffold = ScaffoldMessenger.of(context);
 
+    final cartIsEmpty = !cart.isProductInCart(productId);
+
     return Scaffold(
       body: SafeArea(
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
             SliverAppBar(
+              iconTheme: const IconThemeData(
+                color: Colors.white,
+              ),
               actions: [
                 GestureDetector(
-                  // splashRadius: 1,
+                  behavior: HitTestBehavior.translucent,
                   child: Container(
                     width: 60.0,
-                    // height: 50.0,
                     alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(16.0)),
-                      color: Colors.white.withOpacity(0.5),
-                    ),
                     child: Icon(
                       loadedProduct.isFavorite
                           ? Icons.favorite_rounded
                           : Icons.favorite_border_rounded,
                       color: loadedProduct.isFavorite
-                          ? Colors.blueGrey
-                          : Colors.blueGrey,
+                          ? Colors.white
+                          : Colors.white,
                     ),
                   ),
                   onTap: () async {
@@ -84,9 +83,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ],
               expandedHeight: MediaQuery.of(context).size.height * 0.6,
               pinned: true,
-              iconTheme: const IconThemeData(
-                color: Colors.black,
-              ),
               flexibleSpace: FlexibleSpaceBar(
                 centerTitle: true,
                 titlePadding: EdgeInsets.zero,
@@ -102,37 +98,59 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           horizontal: 24.0,
                           vertical: 4.0,
                         ),
-                        child: FittedBox(
-                          fit: BoxFit.contain,
-                          child: Text(
-                            loadedProduct.title,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(color: Colors.white),
+                        child: Text(
+                          loadedProduct.title,
+                          maxLines: 3,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                background: PageView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: loadedProduct.imageUrl.length,
-                  itemBuilder: (context, index) => index == 0
-                      ? Hero(
-                          tag: productId,
-                          child: Image.network(
-                            loadedProduct.imageUrl[index],
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : FadeInImage(
-                          placeholder:
-                              const AssetImage('assets/images/placeholder.jpg'),
-                          image: NetworkImage(
-                            loadedProduct.imageUrl[index],
-                          ),
-                          fit: BoxFit.cover,
+                background: Stack(
+                  children: [
+                    PageView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: loadedProduct.imageUrl.length,
+                      itemBuilder: (context, index) => index == 0
+                          ? Hero(
+                              tag: productId,
+                              child: Image.network(
+                                loadedProduct.imageUrl[index],
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : FadeInImage(
+                              placeholder: const AssetImage(
+                                  'assets/images/placeholder.jpg'),
+                              image: NetworkImage(
+                                loadedProduct.imageUrl[index],
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                    Container(
+                      height: 70,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          stops: const [
+                            0.0,
+                            1.0,
+                          ],
+                          colors: [
+                            Colors.black.withOpacity(0.5),
+                            Colors.black.withOpacity(0.0),
+                          ],
                         ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -142,15 +160,21 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      loadedProduct.description,
-                      textAlign: TextAlign.start,
-                      softWrap: true,
+                    child: Column(
+                      children: [
+                        Text(
+                          loadedProduct.category.toString(),
+                          textAlign: TextAlign.start,
+                          softWrap: true,
+                        ),
+                        Text(
+                          loadedProduct.description,
+                          textAlign: TextAlign.start,
+                          softWrap: true,
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -162,7 +186,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       bottomNavigationBar: SafeArea(
         child: Container(
           color: Colors.blueGrey,
-          //margin: EdgeInsets.only(bottom: Platform.isIOS ? 8.0 : 8.0),
           height: 50,
           child: AnimatedOpacity(
             duration: const Duration(milliseconds: 300),
@@ -177,50 +200,38 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               }
               if (_addItem) {
                 cart.addItem(
-                  productId,
-                  loadedProduct.price,
-                  loadedProduct.title,
+                  productId: productId,
+                  price: loadedProduct.price,
+                  salePrice: loadedProduct.salePrice,
+                  title: loadedProduct.title,
                 );
                 _addItem = false;
               }
             }),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                if (cart.productQuantity(productId) > 0)
-                  GestureDetector(
+            child: cartIsEmpty
+                ? GestureDetector(
                     behavior: HitTestBehavior.translucent,
-                    child: const SizedBox(
-                      width: 60,
-                      height: 40,
-                      child: Icon(
-                        Icons.remove,
-                        size: 30,
-                        color: Colors.white,
-                      ),
-                    ),
-                    onTap: () {
-                      setState(() {
-                        _opacity = 0.0;
-                        _removeItem = true;
-                      });
-                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Товар удален из корзины',
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (loadedProduct.isOnSale())
+                          Text(
+                            '${loadedProduct.price.toStringAsFixed(2)} ₽   ',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.5),
+                              fontSize: 18,
+                              decoration: TextDecoration.lineThrough,
+                            ),
                           ),
-                          duration: Duration(seconds: 1),
+                        Text(
+                          '${loadedProduct.actualPrice().toStringAsFixed(2)} ₽',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
                         ),
-                      );
-                    },
-                  ),
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  child: Row(
-                    children: [
-                      if (cart.productQuantity(productId) == 0)
                         const SizedBox(
                           width: 40,
                           height: double.infinity,
@@ -229,49 +240,95 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             color: Colors.white,
                           ),
                         ),
+                      ],
+                    ),
+                    onTap: () {
+                      setState(() {
+                        _opacity = 0.0;
+                        _addItem = true;
+                      });
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Товар добавлен в корзину',
+                          ),
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
+                    },
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      cartActionButton(
+                        context: context,
+                        icon: Icons.remove,
+                        action: () {
+                          setState(() {
+                            _opacity = 0.0;
+                            _removeItem = true;
+                          });
+                        },
+                        snackBarText: 'Товар удален из корзины',
+                      ),
                       Text(
-                        cart.productQuantity(productId) > 0
-                            ? '${cart.productQuantity(productId)} x ${loadedProduct.price.toStringAsFixed(2)} ₽'
-                            : '${loadedProduct.price.toStringAsFixed(2)} ₽',
+                        '${cart.productQuantity(productId)} x ${loadedProduct.actualPrice().toStringAsFixed(2)} ₽',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
                         ),
                       ),
-                      if (cart.productQuantity(productId) > 0)
-                        const SizedBox(
-                          width: 60,
-                          height: 40,
-                          child: Icon(
-                            Icons.add,
-                            size: 30,
-                            color: Colors.white,
-                          ),
-                        ),
+                      cartActionButton(
+                        context: context,
+                        icon: Icons.add,
+                        action: () {
+                          setState(() {
+                            _opacity = 0.0;
+                            _addItem = true;
+                          });
+                        },
+                        snackBarText: 'Товар добавлен в корзину',
+                      ),
                     ],
                   ),
-                  onTap: () {
-                    setState(() {
-                      _opacity = 0.0;
-                      _addItem = true;
-                    });
-                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Товар добавлен в корзину',
-                        ),
-                        duration: Duration(seconds: 1),
-                      ),
-                    );
-                  },
-                )
-              ],
-            ),
           ),
         ),
       ),
     );
   }
+}
+
+Widget cartActionButton({
+  required BuildContext context,
+  required Function action,
+  required IconData icon,
+  required String snackBarText,
+}) {
+  return GestureDetector(
+    behavior: HitTestBehavior.translucent,
+    child: SizedBox(
+      width: 60,
+      height: 40,
+      child: Icon(
+        icon,
+        size: 30,
+        color: Colors.white,
+      ),
+    ),
+    onTap: () {
+      action();
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            snackBarText,
+          ),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+    },
+  );
 }

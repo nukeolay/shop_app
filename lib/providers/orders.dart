@@ -63,6 +63,7 @@ class Orders with ChangeNotifier {
                   .map((item) => CartItem(
                         // id: item['id'],
                         price: double.parse(item['price'].toString()),
+                        salePrice: double.parse(item['salePrice'].toString()),
                         quantity: item['quantity'],
                         title: item['title'],
                       ))

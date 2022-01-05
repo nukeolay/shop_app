@@ -68,17 +68,27 @@ class _CartScreenState extends State<CartScreen> {
                                   style: TextStyle(fontSize: 20),
                                 ),
                                 const Spacer(),
-                                Chip(
-                                  label: Text(
-                                    '${cart.totalAmount.toStringAsFixed(2)} ₽',
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .primaryTextTheme
-                                            .headline6!
-                                            .color),
+                                FittedBox(
+                                  alignment: Alignment.centerLeft,
+                                  fit: BoxFit.scaleDown,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2.0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        '${cart.totalAmount.toStringAsFixed(2)} ₽',
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .primaryTextTheme
+                                                .headline6!
+                                                .color),
+                                      ),
+                                    ),
                                   ),
-                                  backgroundColor:
-                                      Theme.of(context).primaryColor,
                                 ),
                                 OrderButton(cart),
                               ],

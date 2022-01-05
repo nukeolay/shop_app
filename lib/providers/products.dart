@@ -41,6 +41,10 @@ class Products with ChangeNotifier {
     return _products.where((product) => product.isFavorite).toList();
   }
 
+  List<Product> categoryByNameItems(String categoryName) {
+    return _products.where((product) => product.isFavorite).toList();
+  }
+
   Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
     try {
       appwrite_models.DocumentList productsDocs = await db.listDocuments(
@@ -57,8 +61,12 @@ class Products with ChangeNotifier {
               title: productData.data['title'] as String,
               description: productData.data['description'],
               price: double.parse(productData.data['price'].toString()),
+              salePrice: double.parse(productData.data['salePrice'].toString()),
               imageUrl: (productData.data['imageUrls'] as List<dynamic>)
                   .map((imageUrl) => imageUrl.toString())
+                  .toList(),
+              category: (productData.data['categories'] as List<dynamic>)
+                  .map((category) => category.toString())
                   .toList(),
               isFavorite: favoritesDocs.documents.isEmpty
                   ? false
@@ -87,7 +95,6 @@ class Products with ChangeNotifier {
           'title': product.title,
           'price': product.price,
           'salePrice': 0,
-          'isOnSale': false,
           'description': product.description,
           'imageUrls': product.imageUrl,
           'categories': ['first', 'second'],
@@ -99,7 +106,9 @@ class Products with ChangeNotifier {
         title: product.title,
         description: product.description,
         price: product.price,
+        salePrice: product.salePrice,
         imageUrl: product.imageUrl,
+        category: product.category,
       );
       _products.add(newProduct);
       notifyListeners();

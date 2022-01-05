@@ -10,12 +10,14 @@ class CartItem {
   final String title;
   final int quantity;
   final double price;
+  final double salePrice;
 
   CartItem({
     // required this.id,
     required this.title,
     required this.quantity,
     required this.price,
+    required this.salePrice,
   });
 }
 
@@ -34,7 +36,8 @@ class Cart extends ChangeNotifier {
     if (userId != null && products.isNotEmpty) _init();
   }
 
-  _init() { // TODO вызывается каждый раз при открытии каталога
+  _init() {
+    // TODO вызывается каждый раз при открытии каталога
     _client = appwrite.Client();
     _client
         .setEndpoint(ServerConstants.endpoint)
@@ -60,16 +63,20 @@ class Cart extends ChangeNotifier {
       if (cartDocs.documents[0].data['userId'] != userId) return;
       cartDocId = cartDocs.documents[0].$id;
       final List<dynamic> loadedProductIds =
-          cartDocs.documents[0].data['productIds'];
+          cartDocs.documents[0].data['productIds'] ?? [];
       final List<dynamic> loadedProductQuantities =
-          cartDocs.documents[0].data['productQuantities'];
+          cartDocs.documents[0].data['productQuantities'] ?? [];
       for (String item in loadedProductIds) {
         int index = loadedProductIds.indexOf(item);
+        Product loadedProduct =
+            products.firstWhere((element) => element.id == item);
+
         _cartItems[item] = CartItem(
             // id: item,
-            title: products.firstWhere((element) => element.id == item).title,
+            title: loadedProduct.title,
             quantity: loadedProductQuantities[index],
-            price: products.firstWhere((element) => element.id == item).price);
+            price: loadedProduct.price,
+            salePrice: loadedProduct.salePrice);
       }
       notifyListeners();
     } catch (error) {
@@ -92,17 +99,22 @@ class Cart extends ChangeNotifier {
     double total = 0.0;
     _cartItems.forEach(
       (key, cartItem) {
-        total += cartItem.price * cartItem.quantity;
+        double actualPrice =
+            (cartItem.price != cartItem.salePrice) && (cartItem.salePrice != 0)
+                ? cartItem.salePrice
+                : cartItem.price;
+        total += actualPrice * cartItem.quantity;
       },
     );
     return total;
   }
 
-  void addItem(
-    String productId,
-    double price,
-    String title,
-  ) {
+  void addItem({
+    required String productId,
+    required String title,
+    required double price,
+    required double salePrice,
+  }) {
     if (_cartItems.containsKey(productId)) {
       _cartItems.update(
         productId,
@@ -111,6 +123,7 @@ class Cart extends ChangeNotifier {
           title: existingItem.title,
           quantity: existingItem.quantity + 1,
           price: existingItem.price,
+          salePrice: existingItem.salePrice,
         ),
       );
     } else {
@@ -121,6 +134,7 @@ class Cart extends ChangeNotifier {
                 title: title,
                 quantity: 1,
                 price: price,
+                salePrice: salePrice,
               ));
     }
     notifyListeners();
@@ -144,6 +158,7 @@ class Cart extends ChangeNotifier {
         (existingCartItem) => CartItem(
             // id: existingCartItem.id,
             price: existingCartItem.price,
+            salePrice: existingCartItem.salePrice,
             title: existingCartItem.title,
             quantity: existingCartItem.quantity - 1),
       );

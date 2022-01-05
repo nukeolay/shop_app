@@ -6,12 +6,14 @@ import '../constants/server_constants.dart';
 import '../models/http_exception.dart';
 
 class Product with ChangeNotifier {
-  //TODO поменять модель продукта, добавить поля сейла и тд
+  //TODO поменять модель продукта, добавить поля вес, еще что-то
   final String id;
   final String title;
   final String description;
   final double price;
+  final double salePrice;
   final List<String> imageUrl;
+  final List<String> category;
   bool isFavorite;
 
   Product({
@@ -19,7 +21,9 @@ class Product with ChangeNotifier {
     required this.title,
     required this.description,
     required this.price,
+    required this.salePrice,
     required this.imageUrl,
+    required this.category,
     this.isFavorite = false,
   });
 
@@ -27,7 +31,7 @@ class Product with ChangeNotifier {
     final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
-    // TODO прописать обновление на сервере. Индус обещал вынести клиента в общий блок, чтобы можно было получать его из разных частей программы
+    // TODO Индус обещал вынести клиента в общий блок, чтобы можно было получать его из разных частей программы
     // TODO сделать чтобы сразу исчезал с экрана
     try {
       appwrite.Client _client = appwrite.Client();
@@ -37,12 +41,20 @@ class Product with ChangeNotifier {
       appwrite.Database db = appwrite.Database(_client);
       appwrite_models.DocumentList favoritesDocs = await db.listDocuments(
           collectionId: ServerConstants.favoritesCollectionId);
-      if (favoritesDocs.documents.isEmpty ||
-          favoritesDocs.documents[0].data['favoriteProducts'] == null) {
+      if (favoritesDocs.documents.isEmpty) {
         await db.createDocument(
           collectionId: ServerConstants.favoritesCollectionId,
           data: {
             'userId': userId,
+            'favoriteProducts': [id],
+          },
+        );
+      } else if (favoritesDocs.documents[0].data["favoriteProducts"] == null) {
+        favoritesDocs.documents[0].data['favoriteProducts'] = [id];
+        db.updateDocument(
+          collectionId: ServerConstants.favoritesCollectionId,
+          documentId: favoritesDocs.documents[0].$id,
+          data: {
             'favoriteProducts': [id],
           },
         );
@@ -64,7 +76,16 @@ class Product with ChangeNotifier {
     } catch (error) {
       isFavorite = oldStatus;
       notifyListeners();
-      throw HttpException("Change Favorute Status Failed!");
+      print(error);
+      throw HttpException("Change Favorite Status Failed!");
     }
+  }
+
+  bool isOnSale() {
+    return (price != salePrice) && (salePrice != 0);
+  }
+
+  double actualPrice() {
+    return isOnSale() ? salePrice : price;
   }
 }
