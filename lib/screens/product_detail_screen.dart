@@ -39,6 +39,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               iconTheme: const IconThemeData(
                 color: Colors.white,
               ),
+              backgroundColor: Colors.blueGrey,
               actions: [
                 GestureDetector(
                   behavior: HitTestBehavior.translucent,
@@ -86,31 +87,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               flexibleSpace: FlexibleSpaceBar(
                 centerTitle: true,
                 titlePadding: EdgeInsets.zero,
-                title: Container(
-                  width: double.infinity,
-                  height: 60,
-                  color: Colors.black.withOpacity(0.5),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24.0,
-                          vertical: 4.0,
-                        ),
-                        child: Text(
-                          loadedProduct.title,
-                          maxLines: 3,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                 background: Stack(
                   children: [
                     PageView.builder(
@@ -157,13 +133,28 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             SliverList(
               delegate: SliverChildListDelegate(
                 [
-                  const SizedBox(
-                    height: 10,
-                  ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(
+                            loadedProduct.title,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blueGrey.shade700,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          loadedProduct.category.toString(),
+                          textAlign: TextAlign.start,
+                          softWrap: true,
+                        ),
                         Text(
                           loadedProduct.category.toString(),
                           textAlign: TextAlign.start,
@@ -262,17 +253,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      cartActionButton(
-                        context: context,
-                        icon: Icons.remove,
-                        action: () {
-                          setState(() {
-                            _opacity = 0.0;
-                            _removeItem = true;
-                          });
-                        },
-                        snackBarText: 'Товар удален из корзины',
-                      ),
+                      removeItemFromCartButton(context),
                       Text(
                         '${cart.productQuantity(productId)} x ${loadedProduct.actualPrice().toStringAsFixed(2)} ₽',
                         textAlign: TextAlign.center,
@@ -281,22 +262,40 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           fontSize: 20,
                         ),
                       ),
-                      cartActionButton(
-                        context: context,
-                        icon: Icons.add,
-                        action: () {
-                          setState(() {
-                            _opacity = 0.0;
-                            _addItem = true;
-                          });
-                        },
-                        snackBarText: 'Товар добавлен в корзину',
-                      ),
+                      addItemToCartButton(context),
                     ],
                   ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget removeItemFromCartButton(BuildContext context) {
+    return cartActionButton(
+      context: context,
+      icon: Icons.remove,
+      action: () {
+        setState(() {
+          _opacity = 0.0;
+          _removeItem = true;
+        });
+      },
+      snackBarText: 'Товар удален из корзины',
+    );
+  }
+
+  Widget addItemToCartButton(BuildContext context) {
+    return cartActionButton(
+      context: context,
+      icon: Icons.add,
+      action: () {
+        setState(() {
+          _opacity = 0.0;
+          _addItem = true;
+        });
+      },
+      snackBarText: 'Товар добавлен в корзину',
     );
   }
 }
