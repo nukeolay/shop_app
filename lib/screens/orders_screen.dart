@@ -6,7 +6,7 @@ import '../providers/orders.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({Key? key}) : super(key: key);
-  static const String routeName = '/orders';
+  static const String routeName = '/orders-screen';
 
   @override
   State<OrdersScreen> createState() => _OrdersScreenState();

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../screens/category_screen.dart';
 import '../models/category.dart';
-import '../screens/product_detail_screen.dart';
 
 class CategoryItem extends StatelessWidget {
   final dynamic item;
@@ -34,10 +35,9 @@ class CategoryItem extends StatelessWidget {
         builder: (context, constraints) => GestureDetector(
           behavior: HitTestBehavior.translucent,
           onTap: () {
-            print('pressed: $item');
             Navigator.of(context).pushNamed(
-              ProductDetailScreen.routeName,
-              arguments: item.id,
+              CategoryScreen.routeName,
+              arguments: item,
             );
           },
           child: Column(
@@ -83,7 +83,8 @@ class CategoryItem extends StatelessWidget {
                           bottom: 15.0,
                         ),
                         child: Text(
-                          item.titles[0], // TODO вместо 0 передавать переменную, которая зависит от языка
+                          item.titles[
+                              0], // TODO вместо 0 передавать переменную, которая зависит от языка
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(

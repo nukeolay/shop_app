@@ -56,7 +56,7 @@ class _CartItemState extends State<CartItem> {
                   placeholder:
                       const AssetImage('assets/images/placeholder.jpg'),
                   image: NetworkImage(
-                    product.imageUrl[0],
+                    product.imageUrls[0],
                   ),
                   fit: BoxFit.cover,
                 ),

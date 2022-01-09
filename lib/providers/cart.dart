@@ -33,7 +33,6 @@ class Cart extends ChangeNotifier {
   String? cartDocId;
 
   Cart(this.userId, this.products, this._cartItems) {
-    print('======userId: $userId');
     if (userId != null && products.isNotEmpty) _init();
   }
 

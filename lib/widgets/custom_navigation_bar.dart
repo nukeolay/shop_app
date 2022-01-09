@@ -1,31 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../screens/catalog_screen.dart';
 import '../providers/cart.dart';
 import '../screens/account_screen.dart';
-import '../screens/catalog_screen.dart';
+import '../screens/category_screen.dart';
 import '../screens/wishlist_screen.dart';
 import '../screens/cart_screen.dart';
 import './badge.dart';
 
 class CustomNavigationBar extends StatefulWidget {
-  const CustomNavigationBar({Key? key}) : super(key: key);
+  final int currentIndex;
+  const CustomNavigationBar({
+    this.currentIndex = 0,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<CustomNavigationBar> createState() => _CustomNavigationBarState();
 }
 
 class _CustomNavigationBarState extends State<CustomNavigationBar> {
-  var _currentIndex = 0;
+  late int _currentIndex;
   bool _isInit = true;
 
   @override
   void didChangeDependencies() {
+    _currentIndex = widget.currentIndex;
     if (_isInit) {
       _currentIndex =
           int.tryParse(ModalRoute.of(context)!.settings.arguments.toString()) ??
-              0;
+              _currentIndex;
       _isInit = false;
     }
+
     super.didChangeDependencies();
   }
 

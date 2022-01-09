@@ -6,7 +6,7 @@ import '../providers/products.dart';
 
 class ManageProductsScreen extends StatelessWidget {
   const ManageProductsScreen({Key? key}) : super(key: key);
-  static const String routeName = '/manage-products';
+  static const String routeName = '/manage-products-screen';
 
   Future<void> _refreshProducts(BuildContext context) async {
     await Provider.of<Products>(context, listen: false)
@@ -46,7 +46,7 @@ class ManageProductsScreen extends StatelessWidget {
                                       id: productData.products[index].id,
                                       title: productData.products[index].title,
                                       imageUrl:
-                                          productData.products[index].imageUrl[0],
+                                          productData.products[index].imageUrls[0],
                                     ),
                                     const Divider()
                                   ],

@@ -1,35 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../widgets/products_grid.dart';
-import '../providers/products.dart';
+
 import '../widgets/custom_navigation_bar.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
   static const routeName = '/home';
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  bool _isLoading = false;
-  bool _isInit = true;
-
-  @override
-  void didChangeDependencies() async {
-    if (_isInit) {
-      setState(() {
-        _isLoading = true;
-      });
-      await Provider.of<Products>(context).fetchAndSetProducts();
-      setState(() {
-        _isLoading = false;
-      });
-    }
-    _isInit = false;
-    super.didChangeDependencies();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +23,9 @@ class _HomeScreenState extends State<HomeScreen> {
               )),
           automaticallyImplyLeading: false,
         ),
-        body: _isLoading
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : const ProductsGrid(false),
+        body: const Center(
+          child: Text('Home, Sweet Home'),
+        ),
         bottomNavigationBar: const CustomNavigationBar(),
       ),
     );

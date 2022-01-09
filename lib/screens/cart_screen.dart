@@ -8,7 +8,7 @@ import '../widgets/cart_item.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
-  static const routeName = '/cart';
+  static const routeName = '/cart-screen';
 
   @override
   State<CartScreen> createState() => _CartScreenState();

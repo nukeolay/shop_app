@@ -10,7 +10,7 @@ import '../widgets/custom_navigation_bar.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({Key? key}) : super(key: key);
-  static const String routeName = '/account';
+  static const String routeName = '/account-screen';
 
   @override
   State<AccountScreen> createState() => _AccountScreenState();

@@ -38,7 +38,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
             ? const Center(
                 child: CircularProgressIndicator(),
               )
-            : const ProductsGrid(true),
+            : const ProductsGrid(showOnlyFavorites: true),
         bottomNavigationBar: const CustomNavigationBar(),
       ),
     );

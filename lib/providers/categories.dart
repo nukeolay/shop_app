@@ -25,12 +25,47 @@ class Categories with ChangeNotifier {
         .setEndpoint(ServerConstants.endpoint)
         .setProject(ServerConstants.projectId);
     db = appwrite.Database(_client);
-    await fetchAndSetCategories();
+    // await fetchAndSetCategories();
+  }
+
+  List<Category> get allCategories {
+    return [..._categories];
   }
 
   List<Category> get categories {
-    return [..._categories];
+    List<Category> categoriesCopy = [..._categories];
+    categoriesCopy.removeWhere((category) => category.isCollection);
+    return [...categoriesCopy];
   }
+
+  List<Category> get collections {
+    List<Category> categoriesCopy = [..._categories];
+    categoriesCopy.removeWhere((category) => !category.isCollection);
+    return [...categoriesCopy];
+  }
+
+  Category getCategoryById(String id) {
+    return _categories.firstWhere((element) => element.id == id);
+  }
+
+  List<Category> getCategoriesByIds(List<String> idsList) {
+    List<Category> result = [];
+    for (var id in idsList) {
+      result.add(getCategoryById(id));
+    }
+    return result;
+  }
+
+  // List<String> getCategoryNamesByIds({
+  //   required int languageIndex,
+  //   required List<String> idsList,
+  // }) {
+  //   List<String> names = [];
+  //   for (var item in _categories) {
+  //     names.add(item.titles[languageIndex]);
+  //   }
+  //   return names;
+  // }
 
   Future<void> fetchAndSetCategories() async {
     print('---"Categories.fetchAndSetCategories" called');
@@ -58,8 +93,10 @@ class Categories with ChangeNotifier {
             );
           },
         ).toList();
+        loadedCategories.sort(
+          (a, b) => a.category.length.compareTo(b.category.length),
+        );
         _categories = loadedCategories;
-        print(_categories);
         notifyListeners();
       } catch (error) {
         print(

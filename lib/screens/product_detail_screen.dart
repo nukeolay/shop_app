@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../constants/languages.dart';
+import '../models/category.dart';
+import '../providers/categories.dart';
 import '../providers/cart.dart';
 import '../providers/auth.dart';
 import '../providers/product.dart';
 import '../providers/products.dart';
 
 class ProductDetailScreen extends StatefulWidget {
-  static const String routeName = '/product-detail';
+  static const String routeName = '/product-detail-screen';
 
   const ProductDetailScreen({Key? key}) : super(key: key);
 
@@ -23,7 +26,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Widget build(BuildContext context) {
     final productId = ModalRoute.of(context)!.settings.arguments as String;
     Product loadedProduct = Provider.of<Products>(context).findById(productId);
-
+    List<Category> categories = Provider.of<Categories>(context)
+        .getCategoriesByIds(loadedProduct.categoryIds);
     final auth = Provider.of<Auth>(context, listen: false);
     final cart = Provider.of<Cart>(context);
     final scaffold = ScaffoldMessenger.of(context);
@@ -91,12 +95,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   children: [
                     PageView.builder(
                       physics: const BouncingScrollPhysics(),
-                      itemCount: loadedProduct.imageUrl.length,
+                      itemCount: loadedProduct.imageUrls.length,
                       itemBuilder: (context, index) => index == 0
                           ? Hero(
                               tag: productId,
                               child: Image.network(
-                                loadedProduct.imageUrl[index],
+                                loadedProduct.imageUrls[index],
                                 fit: BoxFit.cover,
                               ),
                             )
@@ -104,7 +108,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               placeholder: const AssetImage(
                                   'assets/images/placeholder.jpg'),
                               image: NetworkImage(
-                                loadedProduct.imageUrl[index],
+                                loadedProduct.imageUrls[index],
                               ),
                               fit: BoxFit.cover,
                             ),
@@ -151,7 +155,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           ),
                         ),
                         Text(
-                          loadedProduct.category.toString(),
+                          categories
+                              .map((category) => category.titles[Languages.en])
+                              .toList()
+                              .toString(),
                           textAlign: TextAlign.start,
                           softWrap: true,
                         ),

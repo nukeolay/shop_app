@@ -7,7 +7,7 @@ import '../providers/cart.dart';
 import '../providers/products.dart';
 import '../providers/auth.dart';
 import '../providers/orders.dart';
-import '../screens/categories_screen.dart';
+import 'screens/catalog_screen.dart';
 import '../screens/home_screen.dart';
 import '../helpers/custom_route.dart';
 import '../screens/edit_product_screen.dart';
@@ -15,7 +15,7 @@ import '../screens/orders_screen.dart';
 import '../screens/manage_products_screen.dart';
 import '../screens/cart_screen.dart';
 import '../screens/product_detail_screen.dart';
-import '../screens/catalog_screen.dart';
+import 'screens/category_screen.dart';
 import '../screens/auth_screen.dart';
 import '../screens/splash_screen.dart';
 import '../screens/wishlist_screen.dart';
@@ -90,7 +90,7 @@ class MyApp extends StatelessWidget {
                 const ProgressIndicatorThemeData(color: Colors.blueGrey),
           ),
           home: auth.isLogged
-              ? const CategoriesScreen()
+              ? const HomeScreen()
               : FutureBuilder(
                   future: auth.tryAutologin(),
                   builder: (ctx, authResultSnapshot) =>
@@ -100,7 +100,7 @@ class MyApp extends StatelessWidget {
                           : const AuthScreen(),
                 ),
           routes: {
-            CatalogScreen.routeName: (ctx) => const CatalogScreen(),
+            CategoryScreen.routeName: (ctx) => const CategoryScreen(),
             WishlistScreen.routeName: (ctx) => const WishlistScreen(),
             ProductDetailScreen.routeName: (ctx) => const ProductDetailScreen(),
             CartScreen.routeName: (ctx) => const CartScreen(),
@@ -111,7 +111,7 @@ class MyApp extends StatelessWidget {
             AccountScreen.routeName: (ctx) => const AccountScreen(),
             HomeScreen.routeName: (ctx) => const HomeScreen(),
             AuthScreen.routeName: (ctx) => const AuthScreen(),
-            CategoriesScreen.routeName: (ctx) => const CategoriesScreen(),
+            CatalogScreen.routeName: (ctx) => const CatalogScreen(),
           },
         ),
       ),

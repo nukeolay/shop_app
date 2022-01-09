@@ -5,7 +5,7 @@ import '../providers/product.dart';
 
 class EditProductScreen extends StatefulWidget {
   const EditProductScreen({Key? key}) : super(key: key);
-  static const String routeName = '/edit-product';
+  static const String routeName = '/edit-product-screen';
 
   @override
   _EditProductScreenState createState() => _EditProductScreenState();
@@ -23,8 +23,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
     price: 0,
     salePrice: 0,
     description: '',
-    category: [],
-    imageUrl: [],
+    categoryIds: [],
+    imageUrls: [],
   );
 
   Map<String, String> _initValues = {
@@ -61,7 +61,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           'imageUrl': '',
           'categories': '',
         };
-        _imageUrlController.text = _editedProduct.imageUrl[0];
+        _imageUrlController.text = _editedProduct.imageUrls[0];
         _isInit = false;
       }
     }
@@ -181,8 +181,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           price: _editedProduct.price,
                           salePrice: _editedProduct.salePrice,
                           description: _editedProduct.description,
-                          imageUrl: _editedProduct.imageUrl,
-                          category: _editedProduct.category,
+                          imageUrls: _editedProduct.imageUrls,
+                          categoryIds: _editedProduct.categoryIds,
                           isFavorite: _editedProduct.isFavorite,
                         );
                       },
@@ -215,8 +215,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           price: double.parse(value!),
                           salePrice: _editedProduct.salePrice,
                           description: _editedProduct.description,
-                          imageUrl: _editedProduct.imageUrl,
-                          category: _editedProduct.category,
+                          imageUrls: _editedProduct.imageUrls,
+                          categoryIds: _editedProduct.categoryIds,
                           isFavorite: _editedProduct.isFavorite,
                         );
                       },
@@ -243,8 +243,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           price: _editedProduct.price,
                           salePrice: _editedProduct.salePrice,
                           description: '$value',
-                          imageUrl: _editedProduct.imageUrl,
-                          category: _editedProduct.category,
+                          imageUrls: _editedProduct.imageUrls,
+                          categoryIds: _editedProduct.categoryIds,
                           isFavorite: _editedProduct.isFavorite,
                         );
                       },
@@ -308,15 +308,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                               return null;
                             },
                             onSaved: (value) {
-                              _editedProduct.imageUrl.add('$value');
+                              _editedProduct.imageUrls.add('$value');
                               _editedProduct = Product(
                                 id: _editedProduct.id,
                                 title: _editedProduct.title,
                                 price: _editedProduct.price,
                                 salePrice: _editedProduct.salePrice,
                                 description: _editedProduct.description,
-                                imageUrl: _editedProduct.imageUrl,
-                                category: _editedProduct.category,
+                                imageUrls: _editedProduct.imageUrls,
+                                categoryIds: _editedProduct.categoryIds,
                                 isFavorite: _editedProduct.isFavorite,
                               );
                             },

@@ -12,8 +12,8 @@ class Product with ChangeNotifier {
   final String description;
   final double price;
   final double salePrice;
-  final List<String> imageUrl;
-  final List<String> category;
+  final List<String> imageUrls;
+  final List<String> categoryIds;
   bool isFavorite;
 
   Product({
@@ -22,8 +22,8 @@ class Product with ChangeNotifier {
     required this.description,
     required this.price,
     required this.salePrice,
-    required this.imageUrl,
-    required this.category,
+    required this.imageUrls,
+    required this.categoryIds,
     this.isFavorite = false,
   });
 

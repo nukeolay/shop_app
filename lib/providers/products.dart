@@ -44,7 +44,7 @@ class Products with ChangeNotifier {
 
   List<Product> productsByCategory(String category) {
     return _products
-        .where((product) => product.category.contains(category))
+        .where((product) => product.categoryIds.contains(category))
         .toList();
   }
 
@@ -69,10 +69,10 @@ class Products with ChangeNotifier {
                 price: double.parse(productData.data['price'].toString()),
                 salePrice:
                     double.parse(productData.data['salePrice'].toString()),
-                imageUrl: (productData.data['imageUrls'] as List<dynamic>)
+                imageUrls: (productData.data['imageUrls'] as List<dynamic>)
                     .map((imageUrl) => imageUrl.toString())
                     .toList(),
-                category: (productData.data['categories'] as List<dynamic>)
+                categoryIds: (productData.data['categories'] as List<dynamic>)
                     .map((category) => category.toString())
                     .toList(),
                 isFavorite: favoritesDocs.documents.isEmpty
@@ -106,7 +106,7 @@ class Products with ChangeNotifier {
           'price': product.price,
           'salePrice': 0,
           'description': product.description,
-          'imageUrls': product.imageUrl,
+          'imageUrls': product.imageUrls,
           'categories': ['first', 'second'],
         },
         read: ['role:member'],
@@ -117,8 +117,8 @@ class Products with ChangeNotifier {
         description: product.description,
         price: product.price,
         salePrice: product.salePrice,
-        imageUrl: product.imageUrl,
-        category: product.category,
+        imageUrls: product.imageUrls,
+        categoryIds: product.categoryIds,
       );
       _products.add(newProduct);
       notifyListeners();
@@ -142,7 +142,7 @@ class Products with ChangeNotifier {
           {
             'title': newProduct.title,
             'description': newProduct.description,
-            'imageUrl': newProduct.imageUrl,
+            'imageUrl': newProduct.imageUrls,
             'price': newProduct.price,
             'isFavorite': newProduct.isFavorite,
           },

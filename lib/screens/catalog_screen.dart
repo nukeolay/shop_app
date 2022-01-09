@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../widgets/categories_grid.dart';
+import '../providers/categories.dart';
 import '../widgets/custom_navigation_bar.dart';
-import '../providers/products.dart';
-import '../widgets/products_grid.dart';
 
 class CatalogScreen extends StatefulWidget {
-  static String routeName = '/products-overview';
+  static String routeName = '/catalog-screen';
   const CatalogScreen({Key? key}) : super(key: key);
 
   @override
@@ -22,7 +22,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
       setState(() {
         _isLoading = true;
       });
-      await Provider.of<Products>(context).fetchAndSetProducts();
+      await Provider.of<Categories>(context).fetchAndSetCategories();
       setState(() {
         _isLoading = false;
       });
@@ -39,7 +39,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
             ? const Center(
                 child: CircularProgressIndicator(),
               )
-            : const ProductsGrid(false),
+            : const CategoriesGrid(),
         bottomNavigationBar: const CustomNavigationBar(),
       ),
     );
