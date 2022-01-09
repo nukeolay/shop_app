@@ -33,18 +33,19 @@ class Cart extends ChangeNotifier {
   String? cartDocId;
 
   Cart(this.userId, this.products, this._cartItems) {
+    print('======userId: $userId');
     if (userId != null && products.isNotEmpty) _init();
   }
 
-  _init() {
+  _init() async {
     // TODO вызывается каждый раз при открытии каталога
+    print('5 Cart() init called');
     _client = appwrite.Client();
     _client
         .setEndpoint(ServerConstants.endpoint)
         .setProject(ServerConstants.projectId);
     db = appwrite.Database(_client);
-    print('init called!');
-    fetchAndSetCart();
+    await fetchAndSetCart();
   }
 
   Map<String, CartItem> get cartItems {
@@ -56,6 +57,7 @@ class Cart extends ChangeNotifier {
   }
 
   Future<void> fetchAndSetCart() async {
+    print('---"Cart.fetchAndSetCart" called');
     try {
       cartDocs = await db.listDocuments(
           collectionId: ServerConstants.cartsCollectionId);

@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
+import '../providers/categories.dart';
+import '../providers/cart.dart';
+import '../providers/products.dart';
+import '../providers/auth.dart';
+import '../providers/orders.dart';
+import '../screens/categories_screen.dart';
 import '../screens/home_screen.dart';
-import './helpers/custom_route.dart';
-import './providers/auth.dart';
-import './screens/edit_product_screen.dart';
-import './screens/orders_screen.dart';
-import 'screens/manage_products_screen.dart';
-import './providers/orders.dart';
-import './screens/cart_screen.dart';
-import './providers/cart.dart';
-import './providers/products.dart';
-import './screens/product_detail_screen.dart';
-import 'screens/catalog_screen.dart';
-import './screens/auth_screen.dart';
-import './screens/splash_screen.dart';
-import './screens/wishlist_screen.dart';
-import './screens/account_screen.dart';
+import '../helpers/custom_route.dart';
+import '../screens/edit_product_screen.dart';
+import '../screens/orders_screen.dart';
+import '../screens/manage_products_screen.dart';
+import '../screens/cart_screen.dart';
+import '../screens/product_detail_screen.dart';
+import '../screens/catalog_screen.dart';
+import '../screens/auth_screen.dart';
+import '../screens/splash_screen.dart';
+import '../screens/wishlist_screen.dart';
+import '../screens/account_screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -32,24 +35,27 @@ class MyApp extends StatelessWidget {
       providers: [
         // TODO вынести в отдельный файл как у индуса
         ChangeNotifierProvider(
-          create: (ctx) => Auth(),
           lazy: false,
+          create: (ctx) => Auth(),
         ),
         ChangeNotifierProxyProvider<Auth, Products>(
-          create: (ctx) => Products(null, '', []),
-          update: (ctx, auth, previousProducts) => Products(
-            auth.token,
-            auth.userId,
-            previousProducts!.products,
-          ),
+          lazy: false,
+          create: (ctx) => Products(false),
+          update: (ctx, auth, _) => Products(auth.isLogged),
         ),
         ChangeNotifierProxyProvider<Auth, Orders>(
+          lazy: false,
           create: (ctx) => Orders(null, null, []),
           update: (ctx, auth, previousOrders) => Orders(
             auth.token,
             auth.userId,
             previousOrders!.orders,
           ),
+        ),
+        ChangeNotifierProxyProvider<Auth, Categories>(
+          lazy: false,
+          create: (ctx) => Categories(false),
+          update: (ctx, auth, _) => Categories(auth.isLogged),
         ),
         ChangeNotifierProxyProvider2<Auth, Products, Cart>(
           lazy: false,
@@ -83,8 +89,8 @@ class MyApp extends StatelessWidget {
             progressIndicatorTheme:
                 const ProgressIndicatorThemeData(color: Colors.blueGrey),
           ),
-          home: auth.isAuth
-              ? const HomeScreen()
+          home: auth.isLogged
+              ? const CategoriesScreen()
               : FutureBuilder(
                   future: auth.tryAutologin(),
                   builder: (ctx, authResultSnapshot) =>
@@ -105,6 +111,7 @@ class MyApp extends StatelessWidget {
             AccountScreen.routeName: (ctx) => const AccountScreen(),
             HomeScreen.routeName: (ctx) => const HomeScreen(),
             AuthScreen.routeName: (ctx) => const AuthScreen(),
+            CategoriesScreen.routeName: (ctx) => const CategoriesScreen(),
           },
         ),
       ),

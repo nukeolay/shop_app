@@ -156,11 +156,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           softWrap: true,
                         ),
                         Text(
-                          loadedProduct.category.toString(),
-                          textAlign: TextAlign.start,
-                          softWrap: true,
-                        ),
-                        Text(
                           loadedProduct.description,
                           textAlign: TextAlign.start,
                           softWrap: true,

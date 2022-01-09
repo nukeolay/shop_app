@@ -11,22 +11,23 @@ import './product.dart';
 
 class Products with ChangeNotifier {
   List<Product> _products = [];
+  bool isLogged = false;
 
-  final String? authToken;
-  final String? userId;
   late appwrite.Client _client;
   late appwrite.Database db;
 
-  Products(this.authToken, this.userId, this._products) {
+  Products(this.isLogged) {
     _init();
   }
 
-  _init() {
+  _init() async {
+    print('2 Products() init called');
     _client = appwrite.Client();
     _client
         .setEndpoint(ServerConstants.endpoint)
         .setProject(ServerConstants.projectId);
     db = appwrite.Database(_client);
+    await fetchAndSetProducts(); // TODO лезет исключение при запуске
   }
 
   List<Product> get products {
@@ -41,49 +42,58 @@ class Products with ChangeNotifier {
     return _products.where((product) => product.isFavorite).toList();
   }
 
-  List<Product> categoryByNameItems(String categoryName) {
-    return _products.where((product) => product.isFavorite).toList();
+  List<Product> productsByCategory(String category) {
+    return _products
+        .where((product) => product.category.contains(category))
+        .toList();
   }
 
   Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
-    try {
-      appwrite_models.DocumentList productsDocs = await db.listDocuments(
-          collectionId: ServerConstants.productsCollectionId);
-      if (productsDocs.documents.isEmpty) return;
-      appwrite_models.DocumentList favoritesDocs = await db.listDocuments(
-          collectionId: ServerConstants.favoritesCollectionId);
-      final List<Product> loadedProducts = [];
-      productsDocs.documents.map(
-        (productData) {
-          loadedProducts.add(
-            Product(
-              id: productData.$id,
-              title: productData.data['title'] as String,
-              description: productData.data['description'],
-              price: double.parse(productData.data['price'].toString()),
-              salePrice: double.parse(productData.data['salePrice'].toString()),
-              imageUrl: (productData.data['imageUrls'] as List<dynamic>)
-                  .map((imageUrl) => imageUrl.toString())
-                  .toList(),
-              category: (productData.data['categories'] as List<dynamic>)
-                  .map((category) => category.toString())
-                  .toList(),
-              isFavorite: favoritesDocs.documents.isEmpty
-                  ? false
-                  : favoritesDocs.documents[0].data['favoriteProducts'] == null
-                      ? false
-                      : (favoritesDocs.documents[0].data['favoriteProducts']
-                              as List<dynamic>)
-                          .contains(productData.$id),
-            ),
-          );
-        },
-      ).toList();
-      _products = loadedProducts;
-      notifyListeners();
-    } catch (error) {
-      print('fetchAndSetProducts: ${error.toString()}');
-      rethrow;
+    print('---"Products.fetchAndSetProducts" called');
+    if (isLogged && _products.isEmpty) {
+      print('---"Products.fetchAndSetProducts" called and fetching...');
+      try {
+        appwrite_models.DocumentList productsDocs = await db.listDocuments(
+            collectionId: ServerConstants.productsCollectionId);
+        if (productsDocs.documents.isEmpty) return;
+        appwrite_models.DocumentList favoritesDocs = await db.listDocuments(
+            collectionId: ServerConstants.favoritesCollectionId);
+        final List<Product> loadedProducts = [];
+        productsDocs.documents.map(
+          (productData) {
+            loadedProducts.add(
+              Product(
+                id: productData.$id,
+                title: productData.data['title'] as String,
+                description: productData.data['description'],
+                price: double.parse(productData.data['price'].toString()),
+                salePrice:
+                    double.parse(productData.data['salePrice'].toString()),
+                imageUrl: (productData.data['imageUrls'] as List<dynamic>)
+                    .map((imageUrl) => imageUrl.toString())
+                    .toList(),
+                category: (productData.data['categories'] as List<dynamic>)
+                    .map((category) => category.toString())
+                    .toList(),
+                isFavorite: favoritesDocs.documents.isEmpty
+                    ? false
+                    : favoritesDocs.documents[0].data['favoriteProducts'] ==
+                            null
+                        ? false
+                        : (favoritesDocs.documents[0].data['favoriteProducts']
+                                as List<dynamic>)
+                            .contains(productData.$id),
+              ),
+            );
+          },
+        ).toList();
+        _products = loadedProducts;
+        notifyListeners();
+      } catch (error) {
+        print(
+            '!!!!!!! EXCEPTION CATCHED: fetchAndSetProducts: ${error.toString()}');
+        rethrow;
+      }
     }
   }
 
@@ -124,7 +134,7 @@ class Products with ChangeNotifier {
       final Uri url = Uri.https(
         'shop-app-demo-udemy-default-rtdb.firebaseio.com',
         '/products/$id.json',
-        {'auth': authToken},
+        {'auth': 'authToken'},
       );
       http.patch(
         url,
@@ -147,7 +157,7 @@ class Products with ChangeNotifier {
     final Uri url = Uri.https(
       'shop-app-demo-udemy-default-rtdb.firebaseio.com',
       '/products/$id.json',
-      {'auth': authToken},
+      {'auth': 'authToken'},
     );
     final existingProductIndex =
         _products.indexWhere((product) => product.id == id);

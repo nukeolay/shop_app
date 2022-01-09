@@ -18,17 +18,18 @@ class Auth with ChangeNotifier {
     _init();
   }
 
-  _init() {
+  _init() async {
+    print('1 Auth() init called');
     _client = appwrite.Client();
     _account = appwrite.Account(_client);
     _client
         .setEndpoint(ServerConstants.endpoint)
         .setProject(ServerConstants.projectId);
     _user = User(userId: '', email: '', name: '');
-    tryAutologin();
+    await tryAutologin();
   }
 
-  bool get isAuth {
+  bool get isLogged {
     return _session != null;
   }
 
@@ -53,10 +54,10 @@ class Auth with ChangeNotifier {
   String get name => _user.name;
 
   Future<bool> tryAutologin() async {
+    print('---"Auth.tryAutologin" called');
     try {
       appwrite_models.User appwriteUser = await _account.get();
       _session = await _account.getSession(sessionId: 'current');
-      
       _user.userId = appwriteUser.$id;
       _user.email = appwriteUser.email;
       _user.name = appwriteUser.name;
