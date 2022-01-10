@@ -25,7 +25,7 @@ class Categories with ChangeNotifier {
         .setEndpoint(ServerConstants.endpoint)
         .setProject(ServerConstants.projectId);
     db = appwrite.Database(_client);
-    // await fetchAndSetCategories();
+    await fetchAndSetCategories();
   }
 
   List<Category> get allCategories {

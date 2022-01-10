@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../widgets/categories_grid.dart';
 import '../providers/categories.dart';
 import '../widgets/custom_navigation_bar.dart';
@@ -23,6 +24,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
         _isLoading = true;
       });
       await Provider.of<Categories>(context).fetchAndSetCategories();
+      
       setState(() {
         _isLoading = false;
       });

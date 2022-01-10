@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '/providers/products.dart';
 import '../widgets/empty.dart';
 import '../widgets/custom_navigation_bar.dart';
 import '../providers/orders.dart';
@@ -25,6 +27,7 @@ class _CartScreenState extends State<CartScreen> {
         _isLoading = true;
       });
       await Provider.of<Cart>(context).fetchAndSetCart();
+      // await Provider.of<Products>(context).fetchAndSetProducts();
       setState(() {
         _isLoading = false;
       });

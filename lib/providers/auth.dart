@@ -25,7 +25,7 @@ class Auth with ChangeNotifier {
     _client
         .setEndpoint(ServerConstants.endpoint)
         .setProject(ServerConstants.projectId);
-    _user = User(id: '', email: '', name: '');
+    _user = User(id: '', isAdmin: false, email: '', name: '');
     await tryAutologin();
   }
 
@@ -53,14 +53,20 @@ class Auth with ChangeNotifier {
 
   String get name => _user.name;
 
+  bool get isAdmin => _user.isAdmin;
+
   Future<bool> tryAutologin() async {
     print('---"Auth.tryAutologin" called');
     try {
       appwrite_models.User appwriteUser = await _account.get();
       _session = await _account.getSession(sessionId: 'current');
+      appwrite_models.Preferences userPrefs = await _account.getPrefs();
+
       _user.id = appwriteUser.$id;
       _user.email = appwriteUser.email;
       _user.name = appwriteUser.name;
+      _user.isAdmin = userPrefs.data[UserFields.isAdmin];
+
       notifyListeners();
       return true;
     } catch (error) {
@@ -80,9 +86,11 @@ class Auth with ChangeNotifier {
         name: name,
       );
       _session = await _account.createSession(email: email, password: password);
+      await _account.updatePrefs(prefs: {UserFields.isAdmin: false});
       _user.id = appwriteUser.$id;
       _user.email = appwriteUser.email;
       _user.name = appwriteUser.name;
+      _user.isAdmin = false;
       notifyListeners();
     } catch (error) {
       rethrow;
@@ -95,9 +103,12 @@ class Auth with ChangeNotifier {
           email: email,
           password: password); //тут createSession или getSession('current')?
       appwrite_models.User appwriteUser = await _account.get();
+      appwrite_models.Preferences userPrefs = await _account.getPrefs();
+
       _user.id = appwriteUser.$id;
       _user.email = appwriteUser.email;
       _user.name = appwriteUser.name;
+      _user.isAdmin = userPrefs.data[UserFields.isAdmin];
       notifyListeners();
     } catch (error) {
       rethrow;

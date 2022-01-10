@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../screens/catalog_screen.dart';
 import '../providers/cart.dart';
-import '../screens/account_screen.dart';
+import '../features/account_menu/screens/account_screen.dart';
 import '../screens/category_screen.dart';
 import '../screens/wishlist_screen.dart';
 import '../screens/cart_screen.dart';
@@ -67,7 +67,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
                 break;
               case 4:
                 Navigator.of(context).pushReplacementNamed(
-                    AccountScreen.routeName,
+                    AccountMenuScreen.routeName,
                     arguments: i);
                 break;
               default:
