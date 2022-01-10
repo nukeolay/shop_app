@@ -46,7 +46,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(category.titles[Languages.en]),
-              const Icon(Icons.account_circle),
             ],
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/product.dart';
 import '../providers/categories.dart';
 import '../widgets/empty.dart';
 import '../providers/products.dart';
@@ -18,8 +19,7 @@ class ProductsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productsData = Provider.of<Products>(context, listen: false);
-
-    final products = showOnlyFavorites
+    final List<Product> products = showOnlyFavorites
         ? productsData.favoriteItems
         : categoryId == null ||
                 Provider.of<Categories>(context, listen: false)
@@ -30,9 +30,13 @@ class ProductsGrid extends StatelessWidget {
             : productsData.productsByCategory(categoryId!);
 
     return products.isEmpty
-        ? const EmptyWidget(
-            emptyIcon: Icons.favorite_border,
-            emptyText: "В избранном пока нет товаров")
+        ? EmptyWidget(
+            emptyIcon:
+                categoryId == null ? Icons.favorite_border : Icons.menu_book,
+            emptyText: categoryId == null
+                ? 'В избранном пока нет товаров'
+                : 'В данной категории нет товаров',
+          )
         : GridView.builder(
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.all(10.0),

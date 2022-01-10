@@ -45,6 +45,7 @@ class _AccountScreenState extends State<AccountScreen> {
             const Icon(Icons.account_circle),
           ],
         ),
+        actions: const [],
       ),
       body: SafeArea(
         child: Container(
