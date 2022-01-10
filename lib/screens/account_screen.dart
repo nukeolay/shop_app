@@ -37,21 +37,24 @@ class _AccountScreenState extends State<AccountScreen> {
   Widget build(BuildContext context) {
     final name = Provider.of<Auth>(context, listen: false).name;
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(name),
-            const Icon(Icons.account_circle),
-          ],
-        ),
-        actions: const [],
-      ),
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    const Icon(Icons.account_circle),
+                  ],
+                ),
+              ),
               AccountMenuButton(
                 buttonIcon: Icons.assignment_outlined,
                 buttonText: 'Мои заказы',

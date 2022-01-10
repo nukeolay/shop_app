@@ -8,10 +8,10 @@ import '../providers/products.dart';
 import '../widgets/product_item.dart';
 
 class ProductsGrid extends StatelessWidget {
-  final bool showOnlyFavorites;
+  // final bool showOnlyFavorites;
   final String? categoryId;
   const ProductsGrid({
-    this.showOnlyFavorites = false,
+    // this.showOnlyFavorites = false,
     this.categoryId,
     Key? key,
   }) : super(key: key);
@@ -19,13 +19,12 @@ class ProductsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productsData = Provider.of<Products>(context, listen: false);
-    final List<Product> products = showOnlyFavorites
+    final List<Product> products = categoryId == null
         ? productsData.favoriteItems
-        : categoryId == null ||
-                Provider.of<Categories>(context, listen: false)
-                        .getCategoryById(categoryId!)
-                        .category ==
-                    '*'
+        : Provider.of<Categories>(context, listen: false)
+                    .getCategoryById(categoryId!)
+                    .category ==
+                '*'
             ? productsData.products
             : productsData.productsByCategory(categoryId!);
 

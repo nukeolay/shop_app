@@ -25,7 +25,7 @@ class Auth with ChangeNotifier {
     _client
         .setEndpoint(ServerConstants.endpoint)
         .setProject(ServerConstants.projectId);
-    _user = User(userId: '', email: '', name: '');
+    _user = User(id: '', email: '', name: '');
     await tryAutologin();
   }
 
@@ -47,7 +47,7 @@ class Auth with ChangeNotifier {
     // }
   }
 
-  String get userId => _user.userId;
+  String get userId => _user.id;
 
   String get email => _user.email;
 
@@ -58,7 +58,7 @@ class Auth with ChangeNotifier {
     try {
       appwrite_models.User appwriteUser = await _account.get();
       _session = await _account.getSession(sessionId: 'current');
-      _user.userId = appwriteUser.$id;
+      _user.id = appwriteUser.$id;
       _user.email = appwriteUser.email;
       _user.name = appwriteUser.name;
       notifyListeners();
@@ -80,7 +80,7 @@ class Auth with ChangeNotifier {
         name: name,
       );
       _session = await _account.createSession(email: email, password: password);
-      _user.userId = appwriteUser.$id;
+      _user.id = appwriteUser.$id;
       _user.email = appwriteUser.email;
       _user.name = appwriteUser.name;
       notifyListeners();
@@ -95,7 +95,7 @@ class Auth with ChangeNotifier {
           email: email,
           password: password); //тут createSession или getSession('current')?
       appwrite_models.User appwriteUser = await _account.get();
-      _user.userId = appwriteUser.$id;
+      _user.id = appwriteUser.$id;
       _user.email = appwriteUser.email;
       _user.name = appwriteUser.name;
       notifyListeners();
