@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/products.dart';
-import '../providers/product.dart';
+import '/providers/products.dart';
+import '/providers/product.dart';
 
 class EditProductScreen extends StatefulWidget {
   const EditProductScreen({Key? key}) : super(key: key);
@@ -170,7 +170,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       },
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return 'Укажите значение.';
+                          return 'Укажите значение';
                         }
                         return null;
                       },
@@ -199,13 +199,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       },
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return 'Укажите цену.';
+                          return 'Укажите цену';
                         }
                         if (double.tryParse(value) == null) {
-                          return 'Укажите корректное значение.';
+                          return 'Укажите корректное значение';
                         }
                         if (double.parse(value) <= 0) {
-                          return 'Укажите значение больше 0.';
+                          return 'Укажите значение больше 0';
                         }
                       },
                       onSaved: (value) {
@@ -224,12 +224,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     TextFormField(
                       initialValue: _initValues['description'],
                       decoration: const InputDecoration(labelText: 'Описание'),
-                      maxLines: 3,
+                      maxLines: 10,
                       keyboardType: TextInputType.multiline,
                       focusNode: _descriptionFocusNode,
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return 'Укажите описание.';
+                          return 'Укажите описание';
                         }
                         if (value.length < 10) {
                           return 'Не менее 10 символов';
@@ -266,11 +266,17 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           width: 100,
                           height: 100,
                           child: _imageUrlController.text.isEmpty
-                              ? const Center(
-                                  child:
-                                      Icon(Icons.image_not_supported_outlined),
+                              ? const Icon(
+                                  Icons.image_not_supported_outlined,
+                                  color: Colors.red,
                                 )
                               : FadeInImage(
+                                  imageErrorBuilder:
+                                      (context, error, stackTrace) =>
+                                          const Icon(
+                                    Icons.image_not_supported,
+                                    color: Colors.red,
+                                  ),
                                   placeholder: const AssetImage(
                                       'assets/images/placeholder.jpg'),
                                   image: NetworkImage(
@@ -287,23 +293,26 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             textInputAction: TextInputAction.done,
                             controller: _imageUrlController,
                             focusNode: _imageUrlFocusNode,
-                            onEditingComplete: () {
+                            onChanged: (_) {
                               setState(() {});
                             },
+                            // onEditingComplete: () {
+                            //   setState(() {});
+                            // },
                             onFieldSubmitted: (_) => _saveForm(),
                             validator: (value) {
                               if (value!.isEmpty) {
-                                return 'Введите ссылку.';
+                                return 'Введите ссылку';
                               }
                               if (!value.startsWith('http') &&
                                   !value.startsWith('https')) {
-                                return 'Введите ссылку.';
+                                return 'Введите ссылку';
                               }
                               if (!value.endsWith('.png') &&
                                   !value.endsWith('.jpg') &&
                                   !value.endsWith('.jpeg') &&
                                   !value.endsWith('.gif')) {
-                                return 'Введите ссылку изображения.';
+                                return 'Введите ссылку на изображение';
                               }
                               return null;
                             },

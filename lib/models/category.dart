@@ -1,4 +1,5 @@
 class CategoryFields {
+  static const String id = 'id';
   static const String category = 'category';
   static const String titles = 'categoryTitles';
   static const String isCollection = 'isCollection';

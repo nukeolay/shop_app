@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:appwrite/models.dart' as appwrite_models;
 import 'package:appwrite/appwrite.dart' as appwrite;
@@ -56,17 +54,6 @@ class Categories with ChangeNotifier {
     return result;
   }
 
-  // List<String> getCategoryNamesByIds({
-  //   required int languageIndex,
-  //   required List<String> idsList,
-  // }) {
-  //   List<String> names = [];
-  //   for (var item in _categories) {
-  //     names.add(item.titles[languageIndex]);
-  //   }
-  //   return names;
-  // }
-
   Future<void> fetchAndSetCategories() async {
     print('---"Categories.fetchAndSetCategories" called');
     if (isLogged && _categories.isEmpty) {
@@ -103,6 +90,78 @@ class Categories with ChangeNotifier {
             '!!!!!!! EXCEPTION CATCHED: fetchAndSetCategories: ${error.toString()}');
         rethrow;
       }
+    }
+  }
+
+  Future<void> updateCategory(Category category) async {
+    try {
+      int categoryIndex = _categories
+          .indexWhere((existingCategory) => existingCategory.id == category.id);
+      if (categoryIndex >= 0) {
+        db.updateDocument(
+          collectionId: ServerConstants.categoriesCollectionId,
+          documentId: category.id,
+          data: {
+            CategoryFields.category: category.category,
+            CategoryFields.titles: category.titles,
+            CategoryFields.isCollection: category.isCollection,
+            CategoryFields.imageUrl: category.imageUrl,
+          },
+        );
+        _categories[categoryIndex] = category;
+        notifyListeners();
+      }
+    } catch (error) {
+      print('!!!!!!! EXCEPTION CATCHED: updateCategory: ${error.toString()}');
+      throw HttpException("Category Update Failed!");
+    }
+  }
+
+  Future<void> addCategory(Category category) async {
+    try {
+      appwrite_models.Document newDocument = await db.createDocument(
+        collectionId: ServerConstants.categoriesCollectionId,
+        data: {
+          CategoryFields.category: category.category,
+          CategoryFields.titles: category.titles,
+          CategoryFields.isCollection: category.isCollection,
+          CategoryFields.imageUrl: category.imageUrl,
+        },
+        read: ['role:member'],
+      );
+      final newCategory = Category(
+        id: newDocument.$id,
+        category: category.category,
+        titles: category.titles,
+        isCollection: category.isCollection,
+        imageUrl: category.imageUrl,
+      );
+      _categories.add(newCategory);
+      notifyListeners();
+    } catch (error) {
+      print('!!!!!!! EXCEPTION CATCHED: addCategory: ${error.toString()}');
+      throw HttpException("Category Add Failed!");
+    }
+  }
+
+  Future<void> deleteCategory(String id) async {
+    // TODO удалять у всех продуктов ссылку на эту категорию  (можно эту функцию сделать на сервере или передавать сюда список продуктов и проверять в нем, если ли продукты с этой категорией и предупреждать админа, что сначала нужно удалить из этих категорий продукты)
+    // TODO или автоматически использовать функцию из провайдера products которую нужно написать
+    int existingCategoryIndex =
+        _categories.indexWhere((existingCategory) => existingCategory.id == id);
+    Category existingCategory = _categories[existingCategoryIndex];
+    _categories.removeAt(existingCategoryIndex);
+    notifyListeners();
+    try {
+      await db.deleteDocument(
+        collectionId: ServerConstants.categoriesCollectionId,
+        documentId: id,
+      );
+    } catch (error) {
+      _categories.insert(existingCategoryIndex, existingCategory);
+      notifyListeners();
+      print('!!!!!!! EXCEPTION CATCHED: deleteCategory: ${error.toString()}');
+      throw HttpException("Category Deletion Failed!");
     }
   }
 }

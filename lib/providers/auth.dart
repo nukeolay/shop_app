@@ -18,7 +18,7 @@ class Auth with ChangeNotifier {
     _init();
   }
 
-  _init() async {
+  Future<void> _init() async {
     print('1 Auth() init called');
     _client = appwrite.Client();
     _account = appwrite.Account(_client);
@@ -26,7 +26,7 @@ class Auth with ChangeNotifier {
         .setEndpoint(ServerConstants.endpoint)
         .setProject(ServerConstants.projectId);
     _user = User(id: '', isAdmin: false, email: '', name: '');
-    await tryAutologin();
+    // await tryAutologin(); запускается вручную при старте прилоджения в "home:""
   }
 
   bool get isLogged {
@@ -55,7 +55,7 @@ class Auth with ChangeNotifier {
 
   bool get isAdmin => _user.isAdmin;
 
-  Future<bool> tryAutologin() async {
+  Future<void> tryAutologin() async {
     print('---"Auth.tryAutologin" called');
     try {
       appwrite_models.User appwriteUser = await _account.get();
@@ -68,9 +68,8 @@ class Auth with ChangeNotifier {
       _user.isAdmin = userPrefs.data[UserFields.isAdmin];
 
       notifyListeners();
-      return true;
     } catch (error) {
-      return false;
+      print('!!!!!!! EXCEPTION CATCHED: tryAutologin: ${error.toString()}');
     }
   }
 

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/products.dart';
+import '../../../providers/products.dart';
 import '../screens/edit_product_screen.dart';
 
-class UserProductItem extends StatelessWidget {
+class ManageProductItem extends StatelessWidget {
   final String? id;
   final String title;
   final String imageUrl;
 
-  const UserProductItem({
+  const ManageProductItem({
     required this.id,
     required this.title,
     required this.imageUrl,
@@ -21,8 +21,17 @@ class UserProductItem extends StatelessWidget {
 
     return ListTile(
       title: Text(title),
-      leading: CircleAvatar(
-        backgroundImage: NetworkImage(imageUrl),
+      leading: ClipRRect(
+        borderRadius: BorderRadius.circular(8.0),
+        child: FadeInImage(
+          width: 60,
+          height: 60,
+          placeholder: const AssetImage('assets/images/placeholder.jpg'),
+          image: NetworkImage(
+            imageUrl,
+          ),
+          fit: BoxFit.cover,
+        ),
       ),
       trailing: SizedBox(
         width: 100,

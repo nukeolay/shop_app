@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/features/account_menu/screens/edit_category_screen.dart';
 import 'package:shop_app/features/account_menu/screens/manage_categories_screen.dart';
 
 import '../providers/categories.dart';
@@ -12,16 +13,16 @@ import '../appwrite_edit_data.dart';
 import '../screens/catalog_screen.dart';
 import '../screens/home_screen.dart';
 import '../helpers/custom_route.dart';
-import '../screens/edit_product_screen.dart';
+import 'features/account_menu/screens/edit_product_screen.dart';
 import '../screens/orders_screen.dart';
-import '../screens/manage_products_screen.dart';
+import 'features/account_menu/screens/manage_products_screen.dart';
 import '../screens/cart_screen.dart';
 import '../screens/product_detail_screen.dart';
 import '../screens/category_screen.dart';
 import '../screens/auth_screen.dart';
 import '../screens/splash_screen.dart';
 import '../screens/wishlist_screen.dart';
-import 'features/account_menu/screens/account_screen.dart';
+import 'features/account_menu/screens/account_menu_screen.dart';
 
 void main() => runApp(const MyApp());
 // void main() => runApp(const AppWriteEditData()); // делает текущего пользователя админом
@@ -92,17 +93,16 @@ class MyApp extends StatelessWidget {
             progressIndicatorTheme:
                 const ProgressIndicatorThemeData(color: Colors.blueGrey),
           ),
-          home: auth.isLogged ? const HomeScreen() : const AuthScreen(),
-          // home: auth.isLogged
-          //     ? const HomeScreen()
-          //     : FutureBuilder(
-          //         future: auth.tryAutologin(),
-          //         builder: (ctx, authResultSnapshot) =>
-          //             authResultSnapshot.connectionState ==
-          //                     ConnectionState.waiting
-          //                 ? const SplashScreen()
-          //                 : const AuthScreen(),
-          //       ),
+          home: auth.isLogged
+              ? const HomeScreen()
+              : FutureBuilder(
+                  future: auth.tryAutologin(),
+                  builder: (ctx, authResultSnapshot) =>
+                      authResultSnapshot.connectionState ==
+                              ConnectionState.waiting
+                          ? const SplashScreen()
+                          : const AuthScreen(),
+                ),
           routes: {
             CategoryScreen.routeName: (ctx) => const CategoryScreen(),
             WishlistScreen.routeName: (ctx) => const WishlistScreen(),
@@ -118,6 +118,7 @@ class MyApp extends StatelessWidget {
             CatalogScreen.routeName: (ctx) => const CatalogScreen(),
             ManageCategoriesScreen.routeName: (ctx) =>
                 const ManageCategoriesScreen(),
+            EditCategoryScreen.routeName: (ctx) => const EditCategoryScreen(),
           },
         ),
       ),

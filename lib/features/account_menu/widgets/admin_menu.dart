@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '/features/account_menu/screens/manage_categories_screen.dart';
 import '/features/account_menu/widgets/account_menu_button.dart';
-import '/screens/manage_products_screen.dart';
+import '../screens/manage_products_screen.dart';
 
 class AdminMenu {
   static void _goToManageProductsScreen(context) {
