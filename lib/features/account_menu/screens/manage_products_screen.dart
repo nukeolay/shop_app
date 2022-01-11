@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/core/presentation/routes/routes.dart';
 
-import 'edit_category_screen.dart';
 import '../widgets/manage_product_item.dart';
-import '../../../providers/products.dart';
+import '../../../notifiers/products.dart';
 
 class ManageProductsScreen extends StatelessWidget {
   const ManageProductsScreen({Key? key}) : super(key: key);
@@ -23,7 +23,7 @@ class ManageProductsScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              Navigator.of(context).pushNamed(EditCategoryScreen.routeName);
+              Navigator.of(context).pushNamed(Routes.editProduct);
             },
           )
         ],

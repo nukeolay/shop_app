@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/categories_grid.dart';
-import '../providers/categories.dart';
+import '../notifiers/categories.dart';
 import '../widgets/custom_navigation_bar.dart';
 
 class CatalogScreen extends StatefulWidget {

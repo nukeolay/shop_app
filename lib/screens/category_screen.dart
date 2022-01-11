@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/constants/languages.dart';
+import '../core/constants/languages.dart';
 import '../models/category.dart';
 import '../widgets/custom_navigation_bar.dart';
-import '../providers/products.dart';
+import '../notifiers/products.dart';
 import '../widgets/products_grid.dart';
 
 class CategoryScreen extends StatefulWidget {
-  static String routeName = '/category-screen';
+  static const String routeName = '/category-screen';
   const CategoryScreen({Key? key}) : super(key: key);
 
   @override

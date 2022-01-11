@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '/providers/products.dart';
 import '../widgets/empty.dart';
 import '../widgets/custom_navigation_bar.dart';
-import '../providers/orders.dart';
-import '../providers/cart.dart' show Cart;
+import '../notifiers/orders.dart';
+import '../notifiers/cart.dart' show Cart;
 import '../widgets/cart_item.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
-  static const routeName = '/cart-screen';
+  static const String routeName = '/cart-screen';
 
   @override
   State<CartScreen> createState() => _CartScreenState();

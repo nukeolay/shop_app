@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/core/presentation/routes/routes.dart';
 
-import '/providers/categories.dart';
-import '/features/account_menu/screens/edit_category_screen.dart';
+import '/notifiers/categories.dart';
 import '/features/account_menu/widgets/confirm_alert_dialog.dart';
-import '/constants/languages.dart';
+import '/core/constants/languages.dart';
 
 class ManageCategoryItem extends StatelessWidget {
   final String id;
@@ -95,7 +95,7 @@ class ManageCategoryItem extends StatelessWidget {
           trailing: IconButton(
             onPressed: () {
               Navigator.of(context).pushNamed(
-                EditCategoryScreen.routeName,
+                Routes.editCategory,
                 arguments: id,
               );
             },

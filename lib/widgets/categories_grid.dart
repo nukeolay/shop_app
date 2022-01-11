@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/widgets/category_item.dart';
-import '../providers/categories.dart';
+import '../notifiers/categories.dart';
 import '../widgets/empty.dart';
 
 class CategoriesGrid extends StatelessWidget {

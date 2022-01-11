@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../providers/orders.dart' as prv;
+import '../notifiers/orders.dart' as prv;
 
 class OrderItem extends StatefulWidget {
   final prv.OrderItem order;

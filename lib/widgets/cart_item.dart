@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../screens/product_detail_screen.dart';
-import '../providers/products.dart';
-import '../providers/cart.dart';
-import '../providers/product.dart';
+import 'package:shop_app/core/presentation/routes/routes.dart';
+import '../notifiers/products.dart';
+import '../notifiers/cart.dart';
+import '../notifiers/product.dart';
 
 class CartItem extends StatefulWidget {
   const CartItem({
@@ -187,7 +187,7 @@ class _CartItemState extends State<CartItem> {
         ),
         onTap: () {
           Navigator.of(context).pushNamed(
-            ProductDetailScreen.routeName,
+            Routes.productDetail,
             arguments: product.id,
           );
         },

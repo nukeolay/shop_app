@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/providers/products.dart';
-import '/providers/product.dart';
+import '/notifiers/products.dart';
+import '/notifiers/product.dart';
 
 class EditProductScreen extends StatefulWidget {
   const EditProductScreen({Key? key}) : super(key: key);
@@ -262,6 +262,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                               width: 1,
                               color: Colors.grey,
                             ),
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
                           width: 100,
                           height: 100,
@@ -270,19 +271,22 @@ class _EditProductScreenState extends State<EditProductScreen> {
                                   Icons.image_not_supported_outlined,
                                   color: Colors.red,
                                 )
-                              : FadeInImage(
-                                  imageErrorBuilder:
-                                      (context, error, stackTrace) =>
-                                          const Icon(
-                                    Icons.image_not_supported,
-                                    color: Colors.red,
+                              : ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: FadeInImage(
+                                    imageErrorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(
+                                      Icons.image_not_supported,
+                                      color: Colors.red,
+                                    ),
+                                    placeholder: const AssetImage(
+                                        'assets/images/placeholder.jpg'),
+                                    image: NetworkImage(
+                                      _imageUrlController.text,
+                                    ),
+                                    fit: BoxFit.scaleDown,
                                   ),
-                                  placeholder: const AssetImage(
-                                      'assets/images/placeholder.jpg'),
-                                  image: NetworkImage(
-                                    _imageUrlController.text,
-                                  ),
-                                  fit: BoxFit.scaleDown,
                                 ),
                         ),
                         Expanded(

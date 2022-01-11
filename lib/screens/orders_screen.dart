@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/widgets/empty.dart';
 import '../widgets/order_item.dart' as wgt;
-import '../providers/orders.dart';
+import '../notifiers/orders.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({Key? key}) : super(key: key);

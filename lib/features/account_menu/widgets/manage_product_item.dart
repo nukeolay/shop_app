@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../providers/products.dart';
+import '../../../notifiers/products.dart';
 import '../screens/edit_product_screen.dart';
 
 class ManageProductItem extends StatelessWidget {

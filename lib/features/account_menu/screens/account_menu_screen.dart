@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '/providers/auth.dart';
+import '/notifiers/auth.dart';
 import '/features/account_menu/widgets/admin_menu.dart';
 import '/features/account_menu/widgets/standart_menu.dart';
 import '/widgets/custom_navigation_bar.dart';

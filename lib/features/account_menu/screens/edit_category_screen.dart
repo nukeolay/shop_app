@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '/constants/languages.dart';
-import '/providers/categories.dart';
+import '/core/constants/languages.dart';
+import '/notifiers/categories.dart';
 import '/models/category.dart';
 
 class EditCategoryScreen extends StatefulWidget {
@@ -269,19 +269,22 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
                                   Icons.image_not_supported_outlined,
                                   color: Colors.red,
                                 )
-                              : FadeInImage(
-                                  imageErrorBuilder:
-                                      (context, error, stackTrace) =>
-                                          const Icon(
-                                    Icons.image_not_supported,
-                                    color: Colors.red,
+                              : ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: FadeInImage(
+                                    imageErrorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(
+                                      Icons.image_not_supported,
+                                      color: Colors.red,
+                                    ),
+                                    placeholder: const AssetImage(
+                                        'assets/images/placeholder.jpg'),
+                                    image: NetworkImage(
+                                      _imageUrlController.text,
+                                    ),
+                                    fit: BoxFit.cover,
                                   ),
-                                  placeholder: const AssetImage(
-                                      'assets/images/placeholder.jpg'),
-                                  image: NetworkImage(
-                                    _imageUrlController.text,
-                                  ),
-                                  fit: BoxFit.scaleDown,
                                 ),
                         ),
                         Expanded(

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:appwrite/models.dart' as appwrite_models;
 import 'package:appwrite/appwrite.dart' as appwrite;
-import '../constants/server_constants.dart';
-import '../providers/product.dart';
+import '../core/constants/server_constants.dart';
+import '../notifiers/product.dart';
 
 class CartItem {
   // final String id;

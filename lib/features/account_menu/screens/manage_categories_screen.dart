@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/core/presentation/routes/routes.dart';
 
 import '/features/account_menu/screens/edit_category_screen.dart';
 import '/models/category.dart';
 import '/features/account_menu/widgets/manage_category_item.dart';
-import '/providers/categories.dart';
+import '/notifiers/categories.dart';
 
 class ManageCategoriesScreen extends StatelessWidget {
   const ManageCategoriesScreen({Key? key}) : super(key: key);
@@ -22,7 +23,7 @@ class ManageCategoriesScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              Navigator.of(context).pushNamed(EditCategoryScreen.routeName);
+              Navigator.of(context).pushNamed(Routes.editCategory);
             },
           )
         ],

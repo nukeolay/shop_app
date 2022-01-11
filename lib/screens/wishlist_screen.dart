@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/products.dart';
+import '../notifiers/products.dart';
 import '../widgets/custom_navigation_bar.dart';
 import '../widgets/products_grid.dart';
 
 class WishlistScreen extends StatefulWidget {
-  static String routeName = '/wishlist-screen';
+  static const String routeName = '/wishlist-screen';
   const WishlistScreen({Key? key}) : super(key: key);
 
   @override

@@ -4,7 +4,7 @@ import '../widgets/custom_navigation_bar.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
-  static const routeName = '/home';
+  static const routeName = '/home-screen';
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/core/presentation/routes/routes.dart';
 
 import '../screens/category_screen.dart';
 import '../models/category.dart';
@@ -36,7 +37,7 @@ class CategoryItem extends StatelessWidget {
           behavior: HitTestBehavior.translucent,
           onTap: () {
             Navigator.of(context).pushNamed(
-              CategoryScreen.routeName,
+              Routes.category,
               arguments: item,
             );
           },

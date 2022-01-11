@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth.dart';
-import '../providers/cart.dart';
-import '../providers/product.dart';
-import '../screens/product_detail_screen.dart';
+import 'package:shop_app/core/presentation/routes/routes.dart';
+import '../notifiers/auth.dart';
+import '../notifiers/cart.dart';
+import '../notifiers/product.dart';
 
 class ProductItem extends StatelessWidget {
   const ProductItem({Key? key}) : super(key: key);
@@ -20,7 +20,7 @@ class ProductItem extends StatelessWidget {
           behavior: HitTestBehavior.translucent,
           onTap: () {
             Navigator.of(context).pushNamed(
-              ProductDetailScreen.routeName,
+              Routes.productDetail,
               arguments: product.id,
             );
           },
@@ -33,25 +33,17 @@ class ProductItem extends StatelessWidget {
                   width: constraints.maxWidth,
                   height: constraints.maxHeight - 20,
                   child: GridTile(
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).pushNamed(
-                          ProductDetailScreen.routeName,
-                          arguments: product.id,
-                        );
-                      },
-                      child: Hero(
-                        tag: product.id,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(14.0),
-                          child: FadeInImage(
-                            placeholder: const AssetImage(
-                                'assets/images/placeholder.jpg'),
-                            image: NetworkImage(
-                              product.imageUrls[0],
-                            ),
-                            fit: BoxFit.cover,
+                    child: Hero(
+                      tag: product.id,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(14.0),
+                        child: FadeInImage(
+                          placeholder: const AssetImage(
+                              'assets/images/placeholder.jpg'),
+                          image: NetworkImage(
+                            product.imageUrls[0],
                           ),
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../constants/languages.dart';
+import '../core/constants/languages.dart';
 import '../models/category.dart';
-import '../providers/categories.dart';
-import '../providers/cart.dart';
-import '../providers/auth.dart';
-import '../providers/product.dart';
-import '../providers/products.dart';
+import '../notifiers/categories.dart';
+import '../notifiers/cart.dart';
+import '../notifiers/auth.dart';
+import '../notifiers/product.dart';
+import '../notifiers/products.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   static const String routeName = '/product-detail-screen';

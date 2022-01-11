@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/auth.dart';
-import 'package:shop_app/providers/cart.dart';
-import 'package:shop_app/providers/orders.dart';
-import 'package:shop_app/providers/products.dart';
-import 'package:shop_app/screens/orders_screen.dart';
+import 'package:shop_app/core/presentation/routes/routes.dart';
+import 'package:shop_app/notifiers/auth.dart';
+import 'package:shop_app/notifiers/cart.dart';
+import 'package:shop_app/notifiers/orders.dart';
+import 'package:shop_app/notifiers/products.dart';
 import '/features/account_menu/widgets/account_menu_button.dart';
 
 class StandartMenu {
   static void _goToOrdersScreen(context) {
-    Navigator.of(context).pushNamed(OrdersScreen.routeName);
+    Navigator.of(context).pushNamed(Routes.orders);
   }
 
   static void _logout(context) async {

@@ -5,7 +5,7 @@ import 'package:appwrite/models.dart' as appwrite_models;
 import 'package:appwrite/appwrite.dart' as appwrite;
 import 'package:http/http.dart' as http;
 
-import '../constants/server_constants.dart';
+import '../core/constants/server_constants.dart';
 import '../models/http_exception.dart';
 import './product.dart';
 
