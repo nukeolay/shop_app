@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:appwrite/models.dart' as appwrite_models;
 import 'package:appwrite/appwrite.dart' as appwrite;
-import 'package:http/http.dart' as http;
 import 'package:shop_app/notifiers/cart.dart';
 
 import '../core/constants/server_constants.dart';
@@ -65,23 +62,31 @@ class Products with ChangeNotifier {
             loadedProducts.add(
               Product(
                 id: productData.$id,
-                title: productData.data['title'] as String,
-                description: productData.data['description'],
-                price: double.parse(productData.data['price'].toString()),
-                salePrice:
-                    double.parse(productData.data['salePrice'].toString()),
-                imageUrls: (productData.data['imageUrls'] as List<dynamic>)
-                    .map((imageUrl) => imageUrl.toString())
-                    .toList(),
-                categoryIds: (productData.data['categories'] as List<dynamic>)
-                    .map((category) => category.toString())
-                    .toList(),
+                title: productData.data[ProductFields.title] as String,
+                description: productData.data[ProductFields.description],
+                price: double.parse(
+                    productData.data[ProductFields.price].toString()),
+                salePrice: double.parse(
+                    productData.data[ProductFields.salePrice].toString()),
+                imageUrls:
+                    (productData.data[ProductFields.imageUrls] as List<dynamic>)
+                        .map((imageUrl) => imageUrl.toString())
+                        .toList(),
+                categoryIds:
+                    (productData.data[ProductFields.categoryIds] == null
+                            ? []
+                            : productData.data[ProductFields.categoryIds]
+                                as List<dynamic>)
+                        .map((category) => category.toString())
+                        .toList(),
                 isFavorite: favoritesDocs.documents.isEmpty
                     ? false
-                    : favoritesDocs.documents[0].data[FavoritesFields.favoriteProducts] ==
+                    : favoritesDocs.documents[0]
+                                .data[FavoritesFields.favoriteProducts] ==
                             null
                         ? false
-                        : (favoritesDocs.documents[0].data[FavoritesFields.favoriteProducts]
+                        : (favoritesDocs.documents[0]
+                                    .data[FavoritesFields.favoriteProducts]
                                 as List<dynamic>)
                             .contains(productData.$id),
               ),

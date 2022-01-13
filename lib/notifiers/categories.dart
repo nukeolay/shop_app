@@ -50,7 +50,15 @@ class Categories with ChangeNotifier {
   }
 
   Category getCategoryById(String id) {
-    return _categories.firstWhere((element) => element.id == id);
+    return _categories.firstWhere(
+      (element) => element.id == id,
+      // orElse: () => Category(
+      //     id: 'none',
+      //     category: 'none',
+      //     titles: ['empty', 'пусто'],
+      //     isCollection: false,
+      //     imageUrl: ''),
+    );
   }
 
   List<Category> getCategoriesByIds(List<String> idsList) {
@@ -153,7 +161,6 @@ class Categories with ChangeNotifier {
 
   Future<void> deleteCategory(String id) async {
     // TODO удалять у всех продуктов ссылку на эту категорию  (можно эту функцию сделать на сервере или передавать сюда список продуктов и проверять в нем, если ли продукты с этой категорией и предупреждать админа, что сначала нужно удалить из этих категорий продукты)
-    // TODO или автоматически использовать функцию из провайдера products которую нужно написать
     int existingCategoryIndex =
         _categories.indexWhere((existingCategory) => existingCategory.id == id);
     Category existingCategory = _categories.removeAt(existingCategoryIndex);
@@ -163,12 +170,14 @@ class Categories with ChangeNotifier {
         collectionId: ServerConstants.categoriesCollectionId,
         documentId: id,
       );
-    //TODO удаляем у всех продуктов ссылку на эту категорию
+      //TODO удаляем у всех продуктов ссылку на эту категорию
       appwrite_models.DocumentList productsList = await db.listDocuments(
           collectionId: ServerConstants.productsCollectionId);
       for (var product in productsList.documents) {
         List<String> productIds =
-            (product.data[ProductFields.categoryIds] as List<dynamic>)
+            (product.data[ProductFields.categoryIds] == null
+                    ? []
+                    : product.data[ProductFields.categoryIds] as List<dynamic>)
                 .map((element) => element.toString())
                 .toList();
         if (productIds.contains(id)) {

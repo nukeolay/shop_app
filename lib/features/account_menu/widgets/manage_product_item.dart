@@ -9,11 +9,13 @@ class ManageProductItem extends StatelessWidget {
   final String id;
   final String title;
   final String imageUrl;
+  final Color? bgColor;
 
   const ManageProductItem({
     required this.id,
     required this.title,
     required this.imageUrl,
+    this.bgColor,
     Key? key,
   }) : super(key: key);
 
@@ -63,6 +65,7 @@ class ManageProductItem extends StatelessWidget {
           border: Border(
             bottom: BorderSide(color: Colors.grey.shade200),
           ),
+          color: bgColor,
         ),
         child: ListTile(
           title: Text(title),

@@ -50,6 +50,9 @@ class ManageProductsScreen extends StatelessWidget {
                                     id: product.id,
                                     title: product.title,
                                     imageUrl: product.imageUrls[0],
+                                    bgColor: product.categoryIds.isEmpty
+                                        ? Colors.red
+                                        : null,
                                   ),
                                 ],
                               );
