@@ -14,6 +14,10 @@ class ProductFields {
   static const String imageUrls = 'imageUrls';
   static const String categoryIds = 'categories';
   static const String isFavorite = 'isFavorite';
+}
+
+class FavoritesFields { // TODO возможно для favorites нужно сделать отдельный провайдер и отдельную модель
+  static const String userId = 'userId';
   static const String favoriteProducts = 'favoriteProducts';
 }
 
@@ -57,31 +61,31 @@ class Product with ChangeNotifier {
         await db.createDocument(
           collectionId: ServerConstants.favoritesCollectionId,
           data: {
-            'userId': userId,
-            'favoriteProducts': [id],
+            FavoritesFields.userId: userId,
+            FavoritesFields.favoriteProducts: [id],
           },
         );
-      } else if (favoritesDocs.documents[0].data["favoriteProducts"] == null) {
-        favoritesDocs.documents[0].data['favoriteProducts'] = [id];
+      } else if (favoritesDocs.documents[0].data[FavoritesFields.favoriteProducts] == null) {
+        favoritesDocs.documents[0].data[FavoritesFields.favoriteProducts] = [id];
         db.updateDocument(
           collectionId: ServerConstants.favoritesCollectionId,
           documentId: favoritesDocs.documents[0].$id,
           data: {
-            'favoriteProducts': [id],
+            FavoritesFields.favoriteProducts: [id],
           },
         );
       } else {
         if (isFavorite) {
-          favoritesDocs.documents[0].data['favoriteProducts'].add(id);
+          favoritesDocs.documents[0].data[FavoritesFields.favoriteProducts].add(id);
         } else {
-          favoritesDocs.documents[0].data['favoriteProducts'].remove(id);
+          favoritesDocs.documents[0].data[FavoritesFields.favoriteProducts].remove(id);
         }
         db.updateDocument(
           collectionId: ServerConstants.favoritesCollectionId,
           documentId: favoritesDocs.documents[0].$id,
           data: {
-            'favoriteProducts':
-                favoritesDocs.documents[0].data['favoriteProducts']
+            FavoritesFields.favoriteProducts:
+                favoritesDocs.documents[0].data[FavoritesFields.favoriteProducts]
           },
         );
       }

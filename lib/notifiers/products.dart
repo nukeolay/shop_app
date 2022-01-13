@@ -78,10 +78,10 @@ class Products with ChangeNotifier {
                     .toList(),
                 isFavorite: favoritesDocs.documents.isEmpty
                     ? false
-                    : favoritesDocs.documents[0].data['favoriteProducts'] ==
+                    : favoritesDocs.documents[0].data[FavoritesFields.favoriteProducts] ==
                             null
                         ? false
-                        : (favoritesDocs.documents[0].data['favoriteProducts']
+                        : (favoritesDocs.documents[0].data[FavoritesFields.favoriteProducts]
                                 as List<dynamic>)
                             .contains(productData.$id),
               ),
@@ -197,7 +197,7 @@ class Products with ChangeNotifier {
           collectionId: ServerConstants.favoritesCollectionId);
       for (var favorites in favoriteList.documents) {
         List<String> favoriteProducts =
-            (favorites.data[ProductFields.favoriteProducts] as List<dynamic>)
+            (favorites.data[FavoritesFields.favoriteProducts] as List<dynamic>)
                 .map((element) => element.toString())
                 .toList();
         if (favoriteProducts.contains(id)) {
@@ -206,7 +206,7 @@ class Products with ChangeNotifier {
             collectionId: ServerConstants.favoritesCollectionId,
             documentId: favorites.$id,
             data: {
-              ProductFields.favoriteProducts: favoriteProducts,
+              FavoritesFields.favoriteProducts: favoriteProducts,
             },
           );
         }

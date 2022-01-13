@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:appwrite/models.dart' as appwrite_models;
 import 'package:appwrite/appwrite.dart' as appwrite;
+import 'package:shop_app/notifiers/product.dart';
 import '../core/constants/server_constants.dart';
 import '../models/http_exception.dart';
 import '../models/category.dart';
@@ -162,6 +163,25 @@ class Categories with ChangeNotifier {
         collectionId: ServerConstants.categoriesCollectionId,
         documentId: id,
       );
+    //TODO удаляем у всех продуктов ссылку на эту категорию
+      appwrite_models.DocumentList productsList = await db.listDocuments(
+          collectionId: ServerConstants.productsCollectionId);
+      for (var product in productsList.documents) {
+        List<String> productIds =
+            (product.data[ProductFields.categoryIds] as List<dynamic>)
+                .map((element) => element.toString())
+                .toList();
+        if (productIds.contains(id)) {
+          productIds.remove(id);
+          await db.updateDocument(
+            collectionId: ServerConstants.productsCollectionId,
+            documentId: product.$id,
+            data: {
+              ProductFields.categoryIds: productIds,
+            },
+          );
+        }
+      }
     } catch (error) {
       _categories.insert(existingCategoryIndex, existingCategory);
       notifyListeners();
