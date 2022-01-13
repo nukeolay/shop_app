@@ -6,7 +6,6 @@ import '../widgets/custom_navigation_bar.dart';
 import '../widgets/products_grid.dart';
 
 class WishlistScreen extends StatefulWidget {
-  static const String routeName = '/wishlist-screen';
   const WishlistScreen({Key? key}) : super(key: key);
 
   @override

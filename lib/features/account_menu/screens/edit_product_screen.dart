@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '/notifiers/products.dart';
 import '/notifiers/product.dart';
 
 class EditProductScreen extends StatefulWidget {
   const EditProductScreen({Key? key}) : super(key: key);
-  static const String routeName = '/edit-product-screen';
 
   @override
   _EditProductScreenState createState() => _EditProductScreenState();
@@ -13,28 +13,15 @@ class EditProductScreen extends StatefulWidget {
 
 class _EditProductScreenState extends State<EditProductScreen> {
   final _priceFocusNode = FocusNode();
+  final _salePriceFocusNode = FocusNode();
   final _descriptionFocusNode = FocusNode();
+
   final _imageUrlFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
-  final _form = GlobalKey<FormState>();
-  Product _editedProduct = Product(
-    id: '',
-    title: '',
-    price: 0,
-    salePrice: 0,
-    description: '',
-    categoryIds: [],
-    imageUrls: [],
-  );
 
-  Map<String, String> _initValues = {
-    'title': '',
-    'description': '',
-    'price': '',
-    'salePrice': '',
-    'imageUrl': '',
-    'categories': '',
-  };
+  final _form = GlobalKey<FormState>();
+
+  late Product _editedProduct;
 
   bool _isInit = true;
   bool _isLoading = false;
@@ -42,6 +29,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
   @override
   void initState() {
     _imageUrlFocusNode.addListener(_updateImageUrl);
+    _editedProduct = Product(
+      id: '',
+      title: '',
+      price: 0,
+      salePrice: 0,
+      description: '',
+      categoryIds: [],
+      imageUrls: [],
+    );
     super.initState();
   }
 
@@ -51,16 +47,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
       final String? productId =
           ModalRoute.of(context)!.settings.arguments as String?;
       if (productId != null) {
-        _editedProduct =
-            Provider.of<Products>(context, listen: false).findById(productId);
-        _initValues = {
-          'title': _editedProduct.title,
-          'description': _editedProduct.description,
-          'price': _editedProduct.price.toString(),
-          'salePrice': _editedProduct.salePrice.toString(),
-          'imageUrl': '',
-          'categories': '',
-        };
+        _editedProduct = Provider.of<Products>(context, listen: false)
+            .getProductById(productId);
         _imageUrlController.text = _editedProduct.imageUrls[0];
         _isInit = false;
       }
@@ -72,6 +60,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   void dispose() {
     _imageUrlFocusNode.removeListener(_updateImageUrl);
     _priceFocusNode.dispose();
+    _salePriceFocusNode.dispose();
     _descriptionFocusNode.dispose();
     _imageUrlFocusNode.dispose();
     _imageUrlController.dispose();
@@ -80,16 +69,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   void _updateImageUrl() {
     String value = _imageUrlController.text;
-    if (!_imageUrlFocusNode.hasFocus) {
-      if ((!value.startsWith('http') && !value.startsWith('https')) ||
-          (!value.endsWith('.png') &&
-              !value.endsWith('.jpg') &&
-              !value.endsWith('.jpeg') &&
-              !value.endsWith('.gif'))) {
-        return;
-      } else {
-        setState(() {});
-      }
+    if ((!value.startsWith('http') && !value.startsWith('https')) ||
+        (!value.endsWith('.png') &&
+            !value.endsWith('.jpg') &&
+            !value.endsWith('.jpeg') &&
+            !value.endsWith('.gif'))) {
+      return;
+    } else {
+      setState(() {});
     }
   }
 
@@ -124,12 +111,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
             ),
           );
         }
-        // finally {
-        //   setState(() {
-        //     _isLoading = false;
-        //   });
-        //   Navigator.of(context).pop();
-        // }
       }
       setState(() {
         _isLoading = false;
@@ -162,7 +143,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   physics: const BouncingScrollPhysics(),
                   children: [
                     TextFormField(
-                      initialValue: _initValues['title'],
+                      initialValue: _editedProduct.title,
                       decoration: const InputDecoration(labelText: 'Название'),
                       textInputAction: TextInputAction.next,
                       onFieldSubmitted: (_) {
@@ -188,14 +169,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       },
                     ),
                     TextFormField(
-                      initialValue: _initValues['price'],
+                      initialValue: _editedProduct.price.toString(),
                       decoration: const InputDecoration(labelText: 'Цена'),
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
                       focusNode: _priceFocusNode,
                       onFieldSubmitted: (_) {
                         FocusScope.of(context)
-                            .requestFocus(_descriptionFocusNode);
+                            .requestFocus(_salePriceFocusNode);
                       },
                       validator: (value) {
                         if (value!.isEmpty) {
@@ -222,7 +203,42 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       },
                     ),
                     TextFormField(
-                      initialValue: _initValues['description'],
+                      initialValue: _editedProduct.salePrice.toString(),
+                      decoration:
+                          const InputDecoration(labelText: 'Цена по скидке'),
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.number,
+                      focusNode: _salePriceFocusNode,
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context)
+                            .requestFocus(_descriptionFocusNode);
+                      },
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Укажите цену';
+                        }
+                        if (double.tryParse(value) == null) {
+                          return 'Укажите корректное значение';
+                        }
+                        if (double.parse(value) < 0) {
+                          return 'Укажите положительное значение или 0';
+                        }
+                      },
+                      onSaved: (value) {
+                        _editedProduct = Product(
+                          id: _editedProduct.id,
+                          title: _editedProduct.title,
+                          price: _editedProduct.price,
+                          salePrice: double.parse(value!),
+                          description: _editedProduct.description,
+                          imageUrls: _editedProduct.imageUrls,
+                          categoryIds: _editedProduct.categoryIds,
+                          isFavorite: _editedProduct.isFavorite,
+                        );
+                      },
+                    ),
+                    TextFormField(
+                      initialValue: _editedProduct.description,
                       decoration: const InputDecoration(labelText: 'Описание'),
                       maxLines: 10,
                       keyboardType: TextInputType.multiline,
@@ -300,9 +316,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             onChanged: (_) {
                               setState(() {});
                             },
-                            // onEditingComplete: () {
-                            //   setState(() {});
-                            // },
                             onFieldSubmitted: (_) => _saveForm(),
                             validator: (value) {
                               if (value!.isEmpty) {

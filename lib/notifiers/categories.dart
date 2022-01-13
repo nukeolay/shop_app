@@ -54,9 +54,9 @@ class Categories with ChangeNotifier {
     return result;
   }
 
-  Future<void> fetchAndSetCategories() async {
+  Future<void> fetchAndSetCategories([bool needRefresh = false]) async {
     print('---"Categories.fetchAndSetCategories" called');
-    if (isLogged && _categories.isEmpty) {
+    if (isLogged && (_categories.isEmpty || needRefresh)) {
       print('---"Categories.fetchAndSetCategories" called and fetching...');
       try {
         appwrite_models.DocumentList categoriesDocs = await db.listDocuments(

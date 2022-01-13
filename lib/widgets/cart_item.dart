@@ -28,7 +28,7 @@ class _CartItemState extends State<CartItem> {
   @override
   Widget build(BuildContext context) {
     Product product = Provider.of<Products>(context, listen: false)
-        .findById(widget.productId);
+        .getProductById(widget.productId);
     Cart cart = Provider.of<Cart>(context);
 
     return Card(

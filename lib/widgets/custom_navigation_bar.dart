@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../screens/catalog_screen.dart';
+
+import '/core/presentation/routes/routes.dart';
 import '../notifiers/cart.dart';
-import '../features/account_menu/screens/account_menu_screen.dart';
-import '../screens/wishlist_screen.dart';
-import '../screens/cart_screen.dart';
 import './badge.dart';
 
 class CustomNavigationBar extends StatefulWidget {
@@ -52,21 +50,21 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
                 break;
               case 1:
                 Navigator.of(context).pushReplacementNamed(
-                    CatalogScreen.routeName,
+                  Routes.catalog,
                     arguments: i);
                 break;
               case 2:
                 Navigator.of(context)
-                    .pushReplacementNamed(CartScreen.routeName, arguments: i);
+                    .pushReplacementNamed(Routes.cart, arguments: i);
                 break;
               case 3:
                 Navigator.of(context).pushReplacementNamed(
-                    WishlistScreen.routeName,
+                    Routes.wishlist,
                     arguments: i);
                 break;
               case 4:
                 Navigator.of(context).pushReplacementNamed(
-                    AccountMenuScreen.routeName,
+                    Routes.accountMenu,
                     arguments: i);
                 break;
               default:
@@ -101,7 +99,8 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
                         top: 9.0,
                         right: 5.0,
                       )),
-                child: const Icon(Icons.shopping_bag),
+                child: 
+                const Icon(Icons.shopping_bag),
               ),
               label: "Корзина",
             ),

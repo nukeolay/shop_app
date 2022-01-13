@@ -1,40 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '/core/constants/languages.dart';
 import '/notifiers/categories.dart';
 import '/models/category.dart';
 
 class EditCategoryScreen extends StatefulWidget {
   const EditCategoryScreen({Key? key}) : super(key: key);
-  static const String routeName = '/edit-category-screen';
 
   @override
   _EditCategoryScreenState createState() => _EditCategoryScreenState();
 }
 
 class _EditCategoryScreenState extends State<EditCategoryScreen> {
-  final _categoryFocusNode = FocusNode();
   final _titleEnFocusNode = FocusNode();
   final _titleRuFocusNode = FocusNode();
   final _imageUrlFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
   final _form = GlobalKey<FormState>();
 
-  Category _editedCategory = Category(
-    id: '',
-    category: '',
-    titles: ['', ''],
-    isCollection: false,
-    imageUrl: '',
-  );
-
-  Map<String, dynamic> _initValues = {
-    CategoryFields.id: '',
-    CategoryFields.category: '',
-    CategoryFields.titles: ['', ''],
-    CategoryFields.isCollection: false,
-    // CategoryFields.imageUrl: '',
-  };
+  late Category _editedCategory;
 
   bool _isInit = true;
   bool _isLoading = false;
@@ -42,6 +27,13 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
   @override
   void initState() {
     _imageUrlFocusNode.addListener(_updateImageUrl);
+    _editedCategory = Category(
+      id: '',
+      category: '',
+      titles: ['', ''],
+      isCollection: false,
+      imageUrl: '',
+    );
     super.initState();
   }
 
@@ -53,13 +45,6 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
       if (categoryId != null) {
         _editedCategory = Provider.of<Categories>(context, listen: false)
             .getCategoryById(categoryId);
-        _initValues = {
-          CategoryFields.id: _editedCategory.id,
-          CategoryFields.category: _editedCategory.category,
-          CategoryFields.titles: _editedCategory.titles,
-          CategoryFields.isCollection: _editedCategory.isCollection,
-          // CategoryFields.imageUrl: _editedCategory.imageUrl,
-        };
         _imageUrlController.text = _editedCategory.imageUrl;
         _isInit = false;
       }
@@ -69,7 +54,6 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
 
   @override
   void dispose() {
-    _categoryFocusNode.dispose();
     _titleEnFocusNode.dispose();
     _titleRuFocusNode.dispose();
     _imageUrlFocusNode.removeListener(_updateImageUrl);
@@ -80,16 +64,14 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
 
   void _updateImageUrl() {
     String value = _imageUrlController.text;
-    if (!_imageUrlFocusNode.hasFocus) {
-      if ((!value.startsWith('http') && !value.startsWith('https')) ||
-          (!value.endsWith('.png') &&
-              !value.endsWith('.jpg') &&
-              !value.endsWith('.jpeg') &&
-              !value.endsWith('.gif'))) {
-        return;
-      } else {
-        setState(() {});
-      }
+    if ((!value.startsWith('http') && !value.startsWith('https')) ||
+        (!value.endsWith('.png') &&
+            !value.endsWith('.jpg') &&
+            !value.endsWith('.jpeg') &&
+            !value.endsWith('.gif'))) {
+      return;
+    } else {
+      setState(() {});
     }
   }
 
@@ -124,12 +106,6 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
             ),
           );
         }
-        // finally {
-        //   setState(() {
-        //     _isLoading = false;
-        //   });
-        //   Navigator.of(context).pop();
-        // }
       }
       setState(() {
         _isLoading = false;
@@ -162,7 +138,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
                   physics: const BouncingScrollPhysics(),
                   children: [
                     TextFormField(
-                      initialValue: _initValues[CategoryFields.category],
+                      initialValue: _editedCategory.category,
                       decoration: const InputDecoration(labelText: 'Категория'),
                       textInputAction: TextInputAction.next,
                       onFieldSubmitted: (_) {
@@ -185,8 +161,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
                       },
                     ),
                     TextFormField(
-                      initialValue: _initValues[CategoryFields.titles]
-                          [Languages.en],
+                      initialValue: _editedCategory.titles[Languages.en],
                       decoration: const InputDecoration(
                           labelText: 'Наименование категориия (en)'),
                       textInputAction: TextInputAction.next,
@@ -211,8 +186,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
                       },
                     ),
                     TextFormField(
-                      initialValue: _initValues[CategoryFields.titles]
-                          [Languages.ru],
+                      initialValue: _editedCategory.titles[Languages.ru],
                       decoration: const InputDecoration(
                           labelText: 'Наименование категориия (ru)'),
                       textInputAction: TextInputAction.next,
@@ -240,10 +214,9 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
                         contentPadding: const EdgeInsets.all(0.0),
                         title: const Text('Коллекция'),
                         subtitle: const Text('включить если это коллекция'),
-                        value: _initValues[CategoryFields.isCollection],
+                        value: _editedCategory.isCollection,
                         onChanged: (value) {
                           setState(() {
-                            _initValues[CategoryFields.isCollection] = value;
                             _editedCategory.isCollection = value;
                           });
                         }),
@@ -299,9 +272,6 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
                             onChanged: (_) {
                               setState(() {});
                             },
-                            // onEditingComplete: () {
-                            //   setState(() {});
-                            // },
                             onFieldSubmitted: (_) => _saveForm(),
                             validator: (value) {
                               if (value == null || value.isEmpty) {

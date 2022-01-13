@@ -6,7 +6,6 @@ import '../notifiers/categories.dart';
 import '../widgets/custom_navigation_bar.dart';
 
 class CatalogScreen extends StatefulWidget {
-  static String routeName = '/catalog-screen';
   const CatalogScreen({Key? key}) : super(key: key);
 
   @override

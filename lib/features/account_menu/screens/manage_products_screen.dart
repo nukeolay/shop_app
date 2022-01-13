@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/core/presentation/routes/routes.dart';
 
+import '/core/presentation/routes/routes.dart';
+import '/notifiers/product.dart';
 import '../widgets/manage_product_item.dart';
 import '../../../notifiers/products.dart';
 
 class ManageProductsScreen extends StatelessWidget {
   const ManageProductsScreen({Key? key}) : super(key: key);
-  static const String routeName = '/manage-products-screen';
 
   Future<void> _refreshProducts(BuildContext context) async {
     await Provider.of<Products>(context, listen: false)
@@ -18,6 +18,7 @@ class ManageProductsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: const Text('Управление товарами'),
         actions: [
           IconButton(
@@ -28,33 +29,36 @@ class ManageProductsScreen extends StatelessWidget {
           )
         ],
       ),
-      body: FutureBuilder(
-        future: _refreshProducts(context),
-        builder: (ctx, snapshot) => snapshot.connectionState ==
-                ConnectionState.waiting
-            ? const Center(child: CircularProgressIndicator())
-            : RefreshIndicator(
-                onRefresh: () => _refreshProducts(context),
-                child: Consumer<Products>(builder: (ctx, productData, _) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: productData.products.length,
-                      itemBuilder: (_, index) => Column(
-                        children: [
-                          ManageProductItem(
-                            id: productData.products[index].id,
-                            title: productData.products[index].title,
-                            imageUrl: productData.products[index].imageUrls[0],
-                          ),
-                          const Divider()
-                        ],
+      body: SafeArea(
+        child: FutureBuilder(
+          future: _refreshProducts(context),
+          builder: (ctx, snapshot) =>
+              snapshot.connectionState == ConnectionState.waiting
+                  ? const Center(child: CircularProgressIndicator())
+                  : RefreshIndicator(
+                      onRefresh: () => _refreshProducts(context),
+                      child: Consumer<Products>(
+                        builder: (ctx, productData, _) {
+                          return ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: productData.products.length,
+                            itemBuilder: (_, index) {
+                              Product product = productData.products[index];
+                              return Column(
+                                children: [
+                                  ManageProductItem(
+                                    id: product.id,
+                                    title: product.title,
+                                    imageUrl: product.imageUrls[0],
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
                       ),
                     ),
-                  );
-                }),
-              ),
+        ),
       ),
     );
   }

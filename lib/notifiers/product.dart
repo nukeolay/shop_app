@@ -5,6 +5,17 @@ import 'package:appwrite/appwrite.dart' as appwrite;
 import '../core//constants/server_constants.dart';
 import '../models/http_exception.dart';
 
+class ProductFields {
+  static const String id = 'id';
+  static const String title = 'title';
+  static const String description = 'description';
+  static const String price = 'price';
+  static const String salePrice = 'salePrice';
+  static const String imageUrls = 'imageUrls';
+  static const String categoryIds = 'categoryIds';
+  static const String isFavorite = 'isFavorite';
+}
+
 class Product with ChangeNotifier {
   //TODO поменять модель продукта, добавить поля вес, еще что-то
   final String id;

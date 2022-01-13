@@ -8,7 +8,6 @@ import '/widgets/custom_navigation_bar.dart';
 
 class AccountMenuScreen extends StatelessWidget {
   const AccountMenuScreen({Key? key}) : super(key: key);
-  static const String routeName = '/account-menu-screen';
 
   @override
   Widget build(BuildContext context) {

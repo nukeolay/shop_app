@@ -9,8 +9,6 @@ import '../notifiers/product.dart';
 import '../notifiers/products.dart';
 
 class ProductDetailScreen extends StatefulWidget {
-  static const String routeName = '/product-detail-screen';
-
   const ProductDetailScreen({Key? key}) : super(key: key);
 
   @override
@@ -25,7 +23,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final productId = ModalRoute.of(context)!.settings.arguments as String;
-    Product loadedProduct = Provider.of<Products>(context).findById(productId);
+    Product loadedProduct = Provider.of<Products>(context).getProductById(productId);
     List<Category> categories = Provider.of<Categories>(context)
         .getCategoriesByIds(loadedProduct.categoryIds);
     final auth = Provider.of<Auth>(context, listen: false);
@@ -43,7 +41,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               iconTheme: const IconThemeData(
                 color: Colors.white,
               ),
-              backgroundColor: Colors.blueGrey,
+              backgroundColor: Colors.grey,
               actions: [
                 GestureDetector(
                   behavior: HitTestBehavior.translucent,
@@ -178,7 +176,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.blueGrey,
+          color: Colors.grey,
           height: 50,
           child: AnimatedOpacity(
             duration: const Duration(milliseconds: 300),

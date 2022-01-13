@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/core/presentation/routes/routes.dart';
 
-import '/features/account_menu/screens/edit_category_screen.dart';
+import '/core/presentation/routes/routes.dart';
 import '/models/category.dart';
 import '/features/account_menu/widgets/manage_category_item.dart';
 import '/notifiers/categories.dart';
 
 class ManageCategoriesScreen extends StatelessWidget {
   const ManageCategoriesScreen({Key? key}) : super(key: key);
-  static const String routeName = '/manage-categories-screen';
+
+  Future<void> _refreshCategories(BuildContext context) async {
+    await Provider.of<Categories>(context, listen: false)
+        .fetchAndSetCategories(true);
+  }
 
   @override
   Widget build(BuildContext context) {
-    Categories categories = Provider.of<Categories>(context);
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -29,23 +30,38 @@ class ManageCategoriesScreen extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-        child: ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            itemCount: categories.allCategories.length,
-            itemBuilder: (_, index) {
-              Category category = categories.allCategories[index];
-              return Column(
-                children: [
-                  ManageCategoryItem(
-                    id: category.id,
-                    category: category.category,
-                    titles: category.titles,
-                    isCollection: category.isCollection,
-                    imageUrl: category.imageUrl,
-                  ),
-                ],
-              );
-            }),
+        child: FutureBuilder(
+          future: _refreshCategories(context),
+          builder: (ctx, snapshot) =>
+              snapshot.connectionState == ConnectionState.waiting
+                  ? const Center(child: CircularProgressIndicator())
+                  : RefreshIndicator(
+                      onRefresh: () => _refreshCategories(context),
+                      child: Consumer<Categories>(
+                        builder: (ctx, categoriesData, _) {
+                          return ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: categoriesData.allCategories.length,
+                            itemBuilder: (_, index) {
+                              Category category =
+                                  categoriesData.allCategories[index];
+                              return Column(
+                                children: [
+                                  ManageCategoryItem(
+                                    id: category.id,
+                                    category: category.category,
+                                    titles: category.titles,
+                                    isCollection: category.isCollection,
+                                    imageUrl: category.imageUrl,
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+        ),
       ),
     );
   }

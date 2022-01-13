@@ -27,7 +27,7 @@ class Products with ChangeNotifier {
         .setEndpoint(ServerConstants.endpoint)
         .setProject(ServerConstants.projectId);
     db = appwrite.Database(_client);
-    await fetchAndSetProducts(); // TODO лезет исключение при запуске
+    await fetchAndSetProducts();
   }
 
   List<Product> get products {
@@ -48,9 +48,9 @@ class Products with ChangeNotifier {
         .toList();
   }
 
-  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+  Future<void> fetchAndSetProducts([bool needRefresh = false]) async {
     print('---"Products.fetchAndSetProducts" called');
-    if (isLogged && _products.isEmpty) {
+    if (isLogged && (_products.isEmpty || needRefresh)) {
       print('---"Products.fetchAndSetProducts" called and fetching...');
       try {
         appwrite_models.DocumentList productsDocs = await db.listDocuments(
@@ -174,7 +174,7 @@ class Products with ChangeNotifier {
     }
   }
 
-  Product findById(String id) {
+  Product getProductById(String id) {
     return _products.firstWhere((product) => product.id == id);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/core/presentation/routes/routes.dart';
 import '../notifiers/auth.dart';
 import '../features/account_menu/screens/manage_products_screen.dart';
 import '../screens/orders_screen.dart';
@@ -23,7 +24,7 @@ class AppDrawer extends StatelessWidget {
             title: const Text('Заказы'),
             onTap: () {
               Navigator.of(context)
-                  .pushReplacementNamed(OrdersScreen.routeName);
+                  .pushReplacementNamed(Routes.orders);
             },
           ),
           const Divider(height: 0),
@@ -32,7 +33,7 @@ class AppDrawer extends StatelessWidget {
             title: const Text('Управление товарами'),
             onTap: () {
               Navigator.of(context)
-                  .pushReplacementNamed(ManageProductsScreen.routeName);
+                  .pushReplacementNamed(Routes.manageProducts);
             },
           ),
           const Divider(height: 0),

@@ -7,7 +7,6 @@ import '../notifiers/products.dart';
 import '../widgets/products_grid.dart';
 
 class CategoryScreen extends StatefulWidget {
-  static const String routeName = '/category-screen';
   const CategoryScreen({Key? key}) : super(key: key);
 
   @override

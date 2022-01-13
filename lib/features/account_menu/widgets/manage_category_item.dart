@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/core/presentation/routes/routes.dart';
 
+import '/core/presentation/routes/routes.dart';
 import '/notifiers/categories.dart';
 import '/features/account_menu/widgets/confirm_alert_dialog.dart';
 import '/core/constants/languages.dart';
