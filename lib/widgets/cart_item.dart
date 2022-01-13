@@ -167,7 +167,8 @@ class _CartItemState extends State<CartItem> {
                           '${(widget.quantity * product.actualPrice()).toStringAsFixed(2)} ₽',
                           style: const TextStyle(
                             color: Colors.red,
-                          ),),
+                          ),
+                        ),
                         Text(
                           '${(widget.quantity * product.price).toStringAsFixed(2)} ₽',
                           style: const TextStyle(
@@ -175,7 +176,6 @@ class _CartItemState extends State<CartItem> {
                             color: Colors.grey,
                           ),
                         ),
-                                                
                       ],
                     )
                   : Text(

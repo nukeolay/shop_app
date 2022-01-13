@@ -26,8 +26,14 @@ class Categories with ChangeNotifier {
     await fetchAndSetCategories();
   }
 
-  List<Category> get allCategories {
-    return [..._categories];
+  List<Category> get fullList {
+    return [...categories, ...collections];
+  }
+
+  List<Category> get fullListExceptWildcard {
+    List<Category> result = [...fullList];
+    result.removeWhere((element) => element.category == '*');
+    return result;
   }
 
   List<Category> get categories {
@@ -149,8 +155,7 @@ class Categories with ChangeNotifier {
     // TODO или автоматически использовать функцию из провайдера products которую нужно написать
     int existingCategoryIndex =
         _categories.indexWhere((existingCategory) => existingCategory.id == id);
-    Category existingCategory = _categories[existingCategoryIndex];
-    _categories.removeAt(existingCategoryIndex);
+    Category existingCategory = _categories.removeAt(existingCategoryIndex);
     notifyListeners();
     try {
       await db.deleteDocument(

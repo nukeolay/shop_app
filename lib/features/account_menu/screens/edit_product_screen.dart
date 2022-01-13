@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:provider/provider.dart';
 
+import '/models/category.dart';
+import '/core/presentation/routes/routes.dart';
+import '/features/account_menu/widgets/menu_button.dart';
+import '/notifiers/categories.dart';
 import '/notifiers/products.dart';
 import '/notifiers/product.dart';
 
@@ -12,23 +17,24 @@ class EditProductScreen extends StatefulWidget {
 }
 
 class _EditProductScreenState extends State<EditProductScreen> {
+  final _form = GlobalKey<FormState>();
+
   final _priceFocusNode = FocusNode();
   final _salePriceFocusNode = FocusNode();
   final _descriptionFocusNode = FocusNode();
 
-  final _imageUrlFocusNode = FocusNode();
-  final _imageUrlController = TextEditingController();
-
-  final _form = GlobalKey<FormState>();
-
   late Product _editedProduct;
+  late List<Category> _categories;
+  late List<Category> _selectedCategories;
+  late List<MultiSelectItem<Category>> _categoryBottomSheetItems;
+  Color _selectImageUrlsButtonColor = Colors.blueGrey.shade100;
+  Color _selectCategoriesButtonColor = Colors.blueGrey.shade100;
 
   bool _isInit = true;
   bool _isLoading = false;
 
   @override
   void initState() {
-    _imageUrlFocusNode.addListener(_updateImageUrl);
     _editedProduct = Product(
       id: '',
       title: '',
@@ -38,6 +44,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
       categoryIds: [],
       imageUrls: [],
     );
+    _categories = [];
+    _selectedCategories = [];
     super.initState();
   }
 
@@ -46,50 +54,49 @@ class _EditProductScreenState extends State<EditProductScreen> {
     if (_isInit) {
       final String? productId =
           ModalRoute.of(context)!.settings.arguments as String?;
+      _categories = Provider.of<Categories>(context, listen: false)
+          .fullListExceptWildcard;
       if (productId != null) {
         _editedProduct = Provider.of<Products>(context, listen: false)
             .getProductById(productId);
-        _imageUrlController.text = _editedProduct.imageUrls[0];
+        _selectedCategories = Provider.of<Categories>(context, listen: false)
+            .getCategoriesByIds(_editedProduct.categoryIds);
         _isInit = false;
       }
+      _categoryBottomSheetItems = _categories
+          .map((category) =>
+              MultiSelectItem<Category>(category, category.category))
+          .toList();
+    }
+    if (_selectedCategories.isEmpty) {
+      _selectCategoriesButtonColor = Theme.of(context).errorColor;
+    }
+    if (_editedProduct.imageUrls.isEmpty) {
+      _selectImageUrlsButtonColor = Theme.of(context).errorColor;
     }
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
-    _imageUrlFocusNode.removeListener(_updateImageUrl);
     _priceFocusNode.dispose();
     _salePriceFocusNode.dispose();
     _descriptionFocusNode.dispose();
-    _imageUrlFocusNode.dispose();
-    _imageUrlController.dispose();
     super.dispose();
-  }
-
-  void _updateImageUrl() {
-    String value = _imageUrlController.text;
-    if ((!value.startsWith('http') && !value.startsWith('https')) ||
-        (!value.endsWith('.png') &&
-            !value.endsWith('.jpg') &&
-            !value.endsWith('.jpeg') &&
-            !value.endsWith('.gif'))) {
-      return;
-    } else {
-      setState(() {});
-    }
   }
 
   Future<void> _saveForm() async {
     final bool _isValid = _form.currentState!.validate();
-    if (_isValid) {
+    if (_isValid &&
+        _editedProduct.imageUrls.isNotEmpty &&
+        _selectedCategories.isNotEmpty) {
       _form.currentState!.save();
       setState(() {
         _isLoading = true;
       });
       if (_editedProduct.id != '') {
         await Provider.of<Products>(context, listen: false)
-            .updateProduct(_editedProduct.id, _editedProduct);
+            .updateProduct(_editedProduct);
       } else {
         try {
           await Provider.of<Products>(context, listen: false)
@@ -105,7 +112,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   onPressed: () {
                     Navigator.of(ctx).pop();
                   },
-                  child: const Text('Ok'),
+                  child: const Text('OK'),
                 ),
               ],
             ),
@@ -119,6 +126,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
+  void _addImageUrls(List<String> imageUrls) {
+    setState(() {
+      _editedProduct.imageUrls.clear();
+      _editedProduct.imageUrls.addAll(imageUrls);
+      if (_editedProduct.imageUrls.isEmpty) {
+        _selectImageUrlsButtonColor = Theme.of(context).errorColor;
+      } else {
+        _selectImageUrlsButtonColor = Colors.grey.shade100;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,7 +146,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
         actions: [
           IconButton(
             onPressed: _saveForm,
-            icon: const Icon(Icons.save),
+            icon: const Icon(Icons.save, color: Colors.green),
           ),
         ],
       ),
@@ -141,6 +160,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 key: _form,
                 child: ListView(
                   physics: const BouncingScrollPhysics(),
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
                   children: [
                     TextFormField(
                       initialValue: _editedProduct.title,
@@ -265,90 +286,83 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         );
                       },
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(
-                            top: 8,
-                            right: 10,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 1,
-                              color: Colors.grey,
-                            ),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          width: 100,
-                          height: 100,
-                          child: _imageUrlController.text.isEmpty
-                              ? const Icon(
-                                  Icons.image_not_supported_outlined,
-                                  color: Colors.red,
-                                )
-                              : ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  child: FadeInImage(
-                                    imageErrorBuilder:
-                                        (context, error, stackTrace) =>
-                                            const Icon(
-                                      Icons.image_not_supported,
-                                      color: Colors.red,
-                                    ),
-                                    placeholder: const AssetImage(
-                                        'assets/images/placeholder.jpg'),
-                                    image: NetworkImage(
-                                      _imageUrlController.text,
-                                    ),
-                                    fit: BoxFit.scaleDown,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: MenuButton(
+                        buttonIcon: Icons.category_rounded,
+                        color: _selectCategoriesButtonColor,
+                        buttonText: 'Выбор категорий и коллекций',
+                        buttonAction: () async {
+                          await showModalBottomSheet(
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            context: context,
+                            builder: (ctx) {
+                              return Container(
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(16.0),
+                                    topRight: Radius.circular(16.0),
                                   ),
+                                  color: Theme.of(context)
+                                      .scaffoldBackgroundColor
+                                      .withOpacity(0.9),
                                 ),
-                        ),
-                        Expanded(
-                          child: TextFormField(
-                            decoration: const InputDecoration(
-                                labelText: 'Ссылка на изображение'),
-                            keyboardType: TextInputType.url,
-                            textInputAction: TextInputAction.done,
-                            controller: _imageUrlController,
-                            focusNode: _imageUrlFocusNode,
-                            onChanged: (_) {
-                              setState(() {});
-                            },
-                            onFieldSubmitted: (_) => _saveForm(),
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Введите ссылку';
-                              }
-                              if (!value.startsWith('http') &&
-                                  !value.startsWith('https')) {
-                                return 'Введите ссылку';
-                              }
-                              if (!value.endsWith('.png') &&
-                                  !value.endsWith('.jpg') &&
-                                  !value.endsWith('.jpeg') &&
-                                  !value.endsWith('.gif')) {
-                                return 'Введите ссылку на изображение';
-                              }
-                              return null;
-                            },
-                            onSaved: (value) {
-                              _editedProduct.imageUrls.add('$value');
-                              _editedProduct = Product(
-                                id: _editedProduct.id,
-                                title: _editedProduct.title,
-                                price: _editedProduct.price,
-                                salePrice: _editedProduct.salePrice,
-                                description: _editedProduct.description,
-                                imageUrls: _editedProduct.imageUrls,
-                                categoryIds: _editedProduct.categoryIds,
-                                isFavorite: _editedProduct.isFavorite,
+                                child: MultiSelectBottomSheet(
+                                  initialChildSize: 0.7,
+                                  maxChildSize: 0.8,
+                                  title: const Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child:
+                                        Text('Укажите категории и коллекции'),
+                                  ),
+                                  listType: MultiSelectListType.CHIP,
+                                  selectedColor: Colors.black,
+                                  selectedItemsTextStyle:
+                                      const TextStyle(color: Colors.white),
+                                  cancelText: const Text('Отмена'),
+                                  confirmText: const Text('OK'),
+                                  items: _categoryBottomSheetItems,
+                                  initialValue: _selectedCategories,
+                                  onConfirm: (values) {
+                                    setState(() {
+                                      _selectedCategories =
+                                          values as List<Category>;
+
+                                      if (_selectedCategories.isEmpty) {
+                                        _selectCategoriesButtonColor =
+                                            Theme.of(context).errorColor;
+                                      } else {
+                                        _selectCategoriesButtonColor =
+                                            Colors.grey.shade100;
+                                        _editedProduct.categoryIds.clear();
+                                        _editedProduct.categoryIds.addAll(
+                                            _selectedCategories
+                                                .map((category) => category.id)
+                                                .toList());
+                                      }
+                                    });
+                                  },
+                                ),
                               );
                             },
-                          ),
+                          );
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: MenuButton(
+                        buttonIcon: Icons.add_photo_alternate_rounded,
+                        buttonText: 'Управление изображениями продукта',
+                        color: _selectImageUrlsButtonColor,
+                        buttonAction: () => Navigator.of(context).pushNamed(
+                          Routes.addImageToProduct,
+                          arguments: [_editedProduct.imageUrls, _addImageUrls],
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/notifiers/products.dart';
 
 import '../widgets/empty.dart';
 import '../widgets/custom_navigation_bar.dart';
@@ -25,7 +26,6 @@ class _CartScreenState extends State<CartScreen> {
         _isLoading = true;
       });
       await Provider.of<Cart>(context).fetchAndSetCart();
-      // await Provider.of<Products>(context).fetchAndSetProducts();
       setState(() {
         _isLoading = false;
       });
@@ -37,6 +37,7 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     Cart cart = Provider.of<Cart>(context);
+
     return Scaffold(
       body: SafeArea(
         child: _isLoading

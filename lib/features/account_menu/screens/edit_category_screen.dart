@@ -122,7 +122,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
         actions: [
           IconButton(
             onPressed: _saveForm,
-            icon: const Icon(Icons.save),
+            icon: const Icon(Icons.save, color: Colors.green),
           ),
         ],
       ),

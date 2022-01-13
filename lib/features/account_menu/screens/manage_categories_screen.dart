@@ -41,10 +41,10 @@ class ManageCategoriesScreen extends StatelessWidget {
                         builder: (ctx, categoriesData, _) {
                           return ListView.builder(
                             physics: const BouncingScrollPhysics(),
-                            itemCount: categoriesData.allCategories.length,
+                            itemCount: categoriesData.fullList.length,
                             itemBuilder: (_, index) {
                               Category category =
-                                  categoriesData.allCategories[index];
+                                  categoriesData.fullList[index];
                               return Column(
                                 children: [
                                   ManageCategoryItem(

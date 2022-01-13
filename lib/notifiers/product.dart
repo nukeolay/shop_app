@@ -12,8 +12,9 @@ class ProductFields {
   static const String price = 'price';
   static const String salePrice = 'salePrice';
   static const String imageUrls = 'imageUrls';
-  static const String categoryIds = 'categoryIds';
+  static const String categoryIds = 'categories';
   static const String isFavorite = 'isFavorite';
+  static const String favoriteProducts = 'favoriteProducts';
 }
 
 class Product with ChangeNotifier {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:appwrite/models.dart' as appwrite_models;
 import 'package:appwrite/appwrite.dart' as appwrite;
 import 'package:http/http.dart' as http;
+import 'package:shop_app/notifiers/cart.dart';
 
 import '../core/constants/server_constants.dart';
 import '../models/http_exception.dart';
@@ -104,10 +105,10 @@ class Products with ChangeNotifier {
         data: {
           'title': product.title,
           'price': product.price,
-          'salePrice': 0,
+          'salePrice': product.salePrice,
           'description': product.description,
           'imageUrls': product.imageUrls,
-          'categories': ['first', 'second'],
+          'categories': product.categoryIds,
         },
         read: ['role:member'],
       );
@@ -123,53 +124,98 @@ class Products with ChangeNotifier {
       _products.add(newProduct);
       notifyListeners();
     } catch (error) {
-      print(error);
+      print('!!!!!!! EXCEPTION CATCHED: addProduct: ${error.toString()}');
       rethrow;
     }
   }
 
-  Future<void> updateProduct(String id, Product newProduct) async {
-    int productIndex = _products.indexWhere((product) => product.id == id);
-    if (productIndex >= 0) {
-      final Uri url = Uri.https(
-        'shop-app-demo-udemy-default-rtdb.firebaseio.com',
-        '/products/$id.json',
-        {'auth': 'authToken'},
-      );
-      http.patch(
-        url,
-        body: jsonEncode(
-          {
-            'title': newProduct.title,
-            'description': newProduct.description,
-            'imageUrl': newProduct.imageUrls,
-            'price': newProduct.price,
-            'isFavorite': newProduct.isFavorite,
+  Future<void> updateProduct(Product product) async {
+    try {
+      int productIndex = _products
+          .indexWhere((existingProduct) => existingProduct.id == product.id);
+      if (productIndex >= 0) {
+        db.updateDocument(
+          collectionId: ServerConstants.productsCollectionId,
+          documentId: product.id,
+          data: {
+            ProductFields.title: product.title,
+            ProductFields.price: product.price,
+            ProductFields.salePrice: product.salePrice,
+            ProductFields.description: product.description,
+            ProductFields.imageUrls: product.imageUrls,
+            ProductFields.categoryIds: product.categoryIds
           },
-        ),
-      );
-      _products[productIndex] = newProduct;
-      notifyListeners();
+        );
+        _products[productIndex] = product;
+        notifyListeners();
+      }
+    } catch (error) {
+      print('!!!!!!! EXCEPTION CATCHED: updateProduct: ${error.toString()}');
+      throw HttpException("Product Update Failed!");
     }
   }
 
-  Future<void> deleteProduct(String? id) async {
-    final Uri url = Uri.https(
-      'shop-app-demo-udemy-default-rtdb.firebaseio.com',
-      '/products/$id.json',
-      {'auth': 'authToken'},
-    );
-    final existingProductIndex =
-        _products.indexWhere((product) => product.id == id);
-    var existingProduct = _products[existingProductIndex];
-    _products.removeAt(existingProductIndex);
-    notifyListeners();
+  Future<void> deleteProduct(String id) async {
+    int localProductIndex =
+        _products.indexWhere((existingProduct) => existingProduct.id == id);
+    Product existingProduct = _products.removeAt(localProductIndex);
     try {
-      await http.delete(url);
-      existingProduct.dispose();
-    } catch (error) {
-      _products.insert(existingProductIndex, existingProduct);
+      await db.deleteDocument(
+        collectionId: ServerConstants.productsCollectionId,
+        documentId: id,
+      );
+      // удаляем продукт из всех корзин
+      appwrite_models.DocumentList cartList = await db.listDocuments(
+          collectionId: ServerConstants.cartsCollectionId);
+      for (var cart in cartList.documents) {
+        List<String> productsInCartIds =
+            (cart.data[CartFields.productIds] as List<dynamic>)
+                .map((element) => element.toString())
+                .toList();
+        List<int> productsInCartQuantities =
+            (cart.data[CartFields.productQuantities] as List<dynamic>)
+                .map((element) {
+          String el = element.toString();
+          return int.parse(el);
+        }).toList();
+        if (productsInCartIds.contains(id)) {
+          int productToDeleteIndex = productsInCartIds.indexOf(id);
+          productsInCartQuantities.removeAt(productToDeleteIndex);
+          productsInCartIds.remove(id);
+          await db.updateDocument(
+            collectionId: ServerConstants.cartsCollectionId,
+            documentId: cart.$id,
+            data: {
+              CartFields.productIds: productsInCartIds,
+              CartFields.productQuantities: productsInCartQuantities
+            },
+          );
+        }
+      }
+      // удаляем продукт из всех избранных
+      appwrite_models.DocumentList favoriteList = await db.listDocuments(
+          collectionId: ServerConstants.favoritesCollectionId);
+      for (var favorites in favoriteList.documents) {
+        List<String> favoriteProducts =
+            (favorites.data[ProductFields.favoriteProducts] as List<dynamic>)
+                .map((element) => element.toString())
+                .toList();
+        if (favoriteProducts.contains(id)) {
+          favoriteProducts.remove(id);
+          await db.updateDocument(
+            collectionId: ServerConstants.favoritesCollectionId,
+            documentId: favorites.$id,
+            data: {
+              ProductFields.favoriteProducts: favoriteProducts,
+            },
+          );
+        }
+      }
       notifyListeners();
+    } catch (error) {
+      _products.insert(localProductIndex, existingProduct);
+      notifyListeners();
+      print('!!!!!!! EXCEPTION CATCHED: deleteProduct: ${error.toString()}');
       throw HttpException("Product Deletion Failed!");
     }
   }

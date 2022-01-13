@@ -21,6 +21,12 @@ class CartItem {
   });
 }
 
+class CartFields {
+  static const String userId = 'userId';
+  static const String productIds = 'productIds';
+  static const String productQuantities = 'productQuantities';
+}
+
 class Cart extends ChangeNotifier {
   final String? userId;
   final List<Product> products;
@@ -61,17 +67,17 @@ class Cart extends ChangeNotifier {
       cartDocs = await db.listDocuments(
           collectionId: ServerConstants.cartsCollectionId);
       if (cartDocs.documents.isEmpty) return;
-      if (cartDocs.documents[0].data['userId'] != userId) return;
+      if (cartDocs.documents[0].data[CartFields.userId] != userId) return;
       cartDocId = cartDocs.documents[0].$id;
       final List<dynamic> loadedProductIds =
-          cartDocs.documents[0].data['productIds'] ?? [];
+          cartDocs.documents[0].data[CartFields.productIds] ?? [];
       final List<dynamic> loadedProductQuantities =
-          cartDocs.documents[0].data['productQuantities'] ?? [];
+          cartDocs.documents[0].data[CartFields.productQuantities] ?? [];
+      _cartItems.clear();
       for (String item in loadedProductIds) {
         int index = loadedProductIds.indexOf(item);
         Product loadedProduct =
             products.firstWhere((element) => element.id == item);
-
         _cartItems[item] = CartItem(
             // id: item,
             title: loadedProduct.title,
@@ -81,7 +87,7 @@ class Cart extends ChangeNotifier {
       }
       notifyListeners();
     } catch (error) {
-      print('fetchAndSetCarts: ${error.toString()}');
+      print('!!!!!!! EXCEPTION CATCHED: fetchAndSetCart: ${error.toString()}');
       rethrow;
     }
   }
@@ -201,9 +207,9 @@ class Cart extends ChangeNotifier {
         cartDocId = (await db.createDocument(
           collectionId: ServerConstants.cartsCollectionId,
           data: {
-            'userId': userId,
-            'productIds': productIds,
-            'productQuantities': productQuantities,
+            CartFields.userId: userId,
+            CartFields.productIds: productIds,
+            CartFields.productQuantities: productQuantities,
           },
         ))
             .$id;
@@ -212,14 +218,14 @@ class Cart extends ChangeNotifier {
           collectionId: ServerConstants.cartsCollectionId,
           documentId: cartDocId!,
           data: {
-            'userId': userId,
-            'productIds': productIds,
-            'productQuantities': productQuantities,
+            CartFields.userId: userId,
+            CartFields.productIds: productIds,
+            CartFields.productQuantities: productQuantities,
           },
         );
       }
     } catch (error) {
-      print('saveCart: ${error.toString()}');
+      print('!!!!!!! EXCEPTION CATCHED: saveCart: ${error.toString()}');
       rethrow;
     }
   }

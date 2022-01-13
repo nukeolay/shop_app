@@ -5,7 +5,7 @@ import 'package:shop_app/notifiers/auth.dart';
 import 'package:shop_app/notifiers/cart.dart';
 import 'package:shop_app/notifiers/orders.dart';
 import 'package:shop_app/notifiers/products.dart';
-import '/features/account_menu/widgets/account_menu_button.dart';
+import 'menu_button.dart';
 
 class StandartMenu {
   static void _goToOrdersScreen(context) {
@@ -22,29 +22,41 @@ class StandartMenu {
 
   static List<Widget> getMenu(BuildContext context) {
     return [
-      AccountMenuButton(
-        buttonIcon: Icons.manage_accounts_outlined,
-        buttonText: 'Настройки аккаунта',
-        color: Colors.grey.shade100,
-        buttonAction: () {},
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: MenuButton(
+          buttonIcon: Icons.manage_accounts_outlined,
+          buttonText: 'Настройки аккаунта',
+          color: Colors.grey.shade100,
+          buttonAction: () {},
+        ),
       ),
-      AccountMenuButton(
-        buttonIcon: Icons.add_business_outlined,
-        buttonText: 'Адрес доставки',
-        color: Colors.grey.shade100,
-        buttonAction: () {},
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: MenuButton(
+          buttonIcon: Icons.add_business_outlined,
+          buttonText: 'Адрес доставки',
+          color: Colors.grey.shade100,
+          buttonAction: () {},
+        ),
       ),
-      AccountMenuButton(
-        buttonIcon: Icons.assignment_outlined,
-        buttonText: 'Заказы',
-        color: Colors.grey.shade100,
-        buttonAction: () => _goToOrdersScreen(context),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: MenuButton(
+          buttonIcon: Icons.assignment_outlined,
+          buttonText: 'Заказы',
+          color: Colors.grey.shade100,
+          buttonAction: () => _goToOrdersScreen(context),
+        ),
       ),
-      AccountMenuButton(
-        buttonIcon: Icons.exit_to_app,
-        buttonText: 'Выход',
-        color: Colors.grey.shade100,
-        buttonAction: () => _logout(context),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: MenuButton(
+          buttonIcon: Icons.exit_to_app,
+          buttonText: 'Выход',
+          color: Colors.grey.shade100,
+          buttonAction: () => _logout(context),
+        ),
       )
     ];
   }

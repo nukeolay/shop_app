@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/features/account_menu/screens/account_menu_screen.dart';
+import 'package:shop_app/features/account_menu/screens/add_image_to_product_screen.dart';
 import 'package:shop_app/features/account_menu/screens/edit_category_screen.dart';
 import 'package:shop_app/features/account_menu/screens/edit_product_screen.dart';
 import 'package:shop_app/features/account_menu/screens/manage_categories_screen.dart';
@@ -27,6 +28,7 @@ class Routes {
   static const String editProduct = '/edit-product-screen';
   static const String editCategory = '/edit-category-screen';
   static const String orders = '/orders-screen';
+  static const String addImageToProduct = '/add-image-to-product-screen';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     return MaterialPageRoute(
@@ -59,6 +61,8 @@ class Routes {
             return const EditCategoryScreen();
           case orders:
             return const OrdersScreen();
+          case addImageToProduct:
+            return const AddImageToProductScreen();
           default:
             return const AuthScreen();
         }
