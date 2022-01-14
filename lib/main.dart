@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import 'package:shop_app/features/auth/screens/auth_screen.dart';
+import 'package:shop_app/features/home/screens/home_screen.dart';
 import '../notifiers/auth.dart';
 import '../core/presentation/notifiers/providers.dart';
 import '../core/presentation/routes/routes.dart';
-import '../helpers/custom_route.dart';
-import '../screens/splash_screen.dart';
-import '../screens/home_screen.dart';
-import '../screens/auth_screen.dart';
+import 'core/presentation/routes/custom_route.dart';
+import 'core/presentation/screens/splash_screen.dart';
 
 void main() => runApp(const MyApp());
 // void main() => runApp(const AppWriteEditData()); // делает текущего пользователя админом

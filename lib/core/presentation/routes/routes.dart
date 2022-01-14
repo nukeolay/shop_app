@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:shop_app/features/account_menu/screens/account_menu_screen.dart';
-import 'package:shop_app/features/account_menu/screens/add_image_to_product_screen.dart';
-import 'package:shop_app/features/account_menu/screens/edit_category_screen.dart';
-import 'package:shop_app/features/account_menu/screens/edit_product_screen.dart';
-import 'package:shop_app/features/account_menu/screens/manage_categories_screen.dart';
-import 'package:shop_app/features/account_menu/screens/manage_products_screen.dart';
-import 'package:shop_app/screens/auth_screen.dart';
-import 'package:shop_app/screens/cart_screen.dart';
-import 'package:shop_app/screens/catalog_screen.dart';
-import 'package:shop_app/screens/category_screen.dart';
-import 'package:shop_app/screens/home_screen.dart';
-import 'package:shop_app/screens/orders_screen.dart';
-import 'package:shop_app/screens/product_detail_screen.dart';
-import 'package:shop_app/screens/wishlist_screen.dart';
+import 'package:shop_app/features/auth/screens/auth_screen.dart';
+import 'package:shop_app/features/home/screens/home_screen.dart';
+import 'package:shop_app/features/settings/client_orders/screens/orders_screen.dart';
+import 'package:shop_app/features/settings/core/screens/account_menu_screen.dart';
+import 'package:shop_app/features/settings/manage_categories/screens/edit_category_screen.dart';
+import 'package:shop_app/features/settings/manage_categories/screens/manage_categories_screen.dart';
+import 'package:shop_app/features/settings/manage_products/screens/add_image_to_product_screen.dart';
+import 'package:shop_app/features/settings/manage_products/screens/edit_product_screen.dart';
+import 'package:shop_app/features/settings/manage_products/screens/manage_products_screen.dart';
+import 'package:shop_app/features/cart/screens/cart_screen.dart';
+import 'package:shop_app/features/catalog/screens/catalog_screen.dart';
+import 'package:shop_app/features/catalog/screens/category_screen.dart';
+import 'package:shop_app/core/presentation/screens/product_detail_screen.dart';
+import 'package:shop_app/features/catalog/screens/wishlist_screen.dart';
 
 class Routes {
   static const String auth = '/auth-screen';

@@ -160,7 +160,6 @@ class Categories with ChangeNotifier {
   }
 
   Future<void> deleteCategory(String id) async {
-    // TODO удалять у всех продуктов ссылку на эту категорию  (можно эту функцию сделать на сервере или передавать сюда список продуктов и проверять в нем, если ли продукты с этой категорией и предупреждать админа, что сначала нужно удалить из этих категорий продукты)
     int existingCategoryIndex =
         _categories.indexWhere((existingCategory) => existingCategory.id == id);
     Category existingCategory = _categories.removeAt(existingCategoryIndex);
@@ -170,7 +169,7 @@ class Categories with ChangeNotifier {
         collectionId: ServerConstants.categoriesCollectionId,
         documentId: id,
       );
-      //TODO удаляем у всех продуктов ссылку на эту категорию
+      // удаляем у всех продуктов ссылку на эту категорию
       appwrite_models.DocumentList productsList = await db.listDocuments(
           collectionId: ServerConstants.productsCollectionId);
       for (var product in productsList.documents) {
