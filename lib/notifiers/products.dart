@@ -169,51 +169,60 @@ class Products with ChangeNotifier {
         collectionId: ServerConstants.productsCollectionId,
         documentId: id,
       );
+
       // удаляем продукт из всех корзин
       appwrite_models.DocumentList cartList = await db.listDocuments(
           collectionId: ServerConstants.cartsCollectionId);
+
       for (var cart in cartList.documents) {
-        List<String> productsInCartIds =
-            (cart.data[CartFields.productIds] as List<dynamic>)
-                .map((element) => element.toString())
-                .toList();
-        List<int> productsInCartQuantities =
-            (cart.data[CartFields.productQuantities] as List<dynamic>)
-                .map((element) {
-          String el = element.toString();
-          return int.parse(el);
-        }).toList();
-        if (productsInCartIds.contains(id)) {
-          int productToDeleteIndex = productsInCartIds.indexOf(id);
-          productsInCartQuantities.removeAt(productToDeleteIndex);
-          productsInCartIds.remove(id);
-          await db.updateDocument(
-            collectionId: ServerConstants.cartsCollectionId,
-            documentId: cart.$id,
-            data: {
-              CartFields.productIds: productsInCartIds,
-              CartFields.productQuantities: productsInCartQuantities
-            },
-          );
+        if (cart.data[CartFields.productIds] != null) {
+          List<String> productsInCartIds =
+              (cart.data[CartFields.productIds] as List<dynamic>)
+                  .map((element) => element.toString())
+                  .toList();
+
+          List<int> productsInCartQuantities =
+              (cart.data[CartFields.productQuantities] as List<dynamic>)
+                  .map((element) {
+            String el = element.toString();
+            return int.parse(el);
+          }).toList();
+
+          if (productsInCartIds.contains(id)) {
+            int productToDeleteIndex = productsInCartIds.indexOf(id);
+            productsInCartQuantities.removeAt(productToDeleteIndex);
+            productsInCartIds.remove(id);
+            await db.updateDocument(
+              collectionId: ServerConstants.cartsCollectionId,
+              documentId: cart.$id,
+              data: {
+                CartFields.productIds: productsInCartIds,
+                CartFields.productQuantities: productsInCartQuantities
+              },
+            );
+          }
         }
       }
+
       // удаляем продукт из всех избранных
       appwrite_models.DocumentList favoriteList = await db.listDocuments(
           collectionId: ServerConstants.favoritesCollectionId);
       for (var favorites in favoriteList.documents) {
-        List<String> favoriteProducts =
-            (favorites.data[FavoritesFields.favoriteProducts] as List<dynamic>)
-                .map((element) => element.toString())
-                .toList();
-        if (favoriteProducts.contains(id)) {
-          favoriteProducts.remove(id);
-          await db.updateDocument(
-            collectionId: ServerConstants.favoritesCollectionId,
-            documentId: favorites.$id,
-            data: {
-              FavoritesFields.favoriteProducts: favoriteProducts,
-            },
-          );
+        if (favorites.data[FavoritesFields.favoriteProducts] != null) {
+          List<String> favoriteProducts = (favorites
+                  .data[FavoritesFields.favoriteProducts] as List<dynamic>)
+              .map((element) => element.toString())
+              .toList();
+          if (favoriteProducts.contains(id)) {
+            favoriteProducts.remove(id);
+            await db.updateDocument(
+              collectionId: ServerConstants.favoritesCollectionId,
+              documentId: favorites.$id,
+              data: {
+                FavoritesFields.favoriteProducts: favoriteProducts,
+              },
+            );
+          }
         }
       }
       notifyListeners();

@@ -52,12 +52,6 @@ class Categories with ChangeNotifier {
   Category getCategoryById(String id) {
     return _categories.firstWhere(
       (element) => element.id == id,
-      // orElse: () => Category(
-      //     id: 'none',
-      //     category: 'none',
-      //     titles: ['empty', 'пусто'],
-      //     isCollection: false,
-      //     imageUrl: ''),
     );
   }
 

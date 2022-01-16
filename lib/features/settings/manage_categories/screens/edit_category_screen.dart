@@ -163,7 +163,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
                     TextFormField(
                       initialValue: _editedCategory.titles[Languages.en],
                       decoration: const InputDecoration(
-                          labelText: 'Наименование категориия (en)'),
+                          labelText: 'Наименование категории (en)'),
                       textInputAction: TextInputAction.next,
                       focusNode: _titleEnFocusNode,
                       onFieldSubmitted: (_) {
@@ -171,7 +171,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Укажите категориия (en)';
+                          return 'Укажите название (en)';
                         }
                       },
                       onSaved: (value) {
@@ -188,7 +188,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
                     TextFormField(
                       initialValue: _editedCategory.titles[Languages.ru],
                       decoration: const InputDecoration(
-                          labelText: 'Наименование категориия (ru)'),
+                          labelText: 'Наименование категории (ru)'),
                       textInputAction: TextInputAction.next,
                       focusNode: _titleRuFocusNode,
                       onFieldSubmitted: (_) {
@@ -196,7 +196,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Укажите категориия (ru)';
+                          return 'Укажите название (ru)';
                         }
                       },
                       onSaved: (value) {

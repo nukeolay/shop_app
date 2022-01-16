@@ -194,7 +194,7 @@ class _AuthCardState extends State<AuthCard>
       _showErrorDialog(errorMessage);
     } catch (error) {
       const errorMessage = 'Ошибка. Попробуйте позже';
-      _showErrorDialog(errorMessage);
+      _showErrorDialog('$errorMessage: $error');
     }
     setState(() {
       _isLoading = false;

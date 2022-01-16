@@ -23,7 +23,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final productId = ModalRoute.of(context)!.settings.arguments as String;
-    Product loadedProduct = Provider.of<Products>(context).getProductById(productId);
+    Product loadedProduct =
+        Provider.of<Products>(context).getProductById(productId);
     List<Category> categories = Provider.of<Categories>(context)
         .getCategoriesByIds(loadedProduct.categoryIds);
     final auth = Provider.of<Auth>(context, listen: false);
@@ -38,97 +39,89 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           physics: const BouncingScrollPhysics(),
           slivers: [
             SliverAppBar(
+              leading: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.black.withOpacity(0.2),
+                  ),
+                  const BackButton(color: Colors.white),
+                ],
+              ),
+              actions: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.black.withOpacity(0.2),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        loadedProduct.isFavorite
+                            ? Icons.favorite_rounded
+                            : Icons.favorite_border_rounded,
+                        color: loadedProduct.isFavorite
+                            ? Colors.red
+                            : Colors.white,
+                      ),
+                      onPressed: () async {
+                        try {
+                          setState(() {});
+                          await loadedProduct.toggleFavorite(
+                            // auth.token,
+                            auth.userId,
+                          );
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: loadedProduct.isFavorite
+                                  ? const Text('Товар добален в список желаний')
+                                  : const Text(
+                                      'Товар удален из списка желаний'),
+                              duration: const Duration(seconds: 1),
+                            ),
+                          );
+                        } catch (error) {
+                          scaffold.showSnackBar(
+                            SnackBar(
+                              content: Text(error.toString()),
+                              duration: const Duration(seconds: 1),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ],
               iconTheme: const IconThemeData(
                 color: Colors.white,
               ),
               backgroundColor: Colors.grey,
-              actions: [
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  child: Container(
-                    width: 60.0,
-                    alignment: Alignment.center,
-                    child: Icon(
-                      loadedProduct.isFavorite
-                          ? Icons.favorite_rounded
-                          : Icons.favorite_border_rounded,
-                      color: loadedProduct.isFavorite
-                          ? Colors.white
-                          : Colors.white,
-                    ),
-                  ),
-                  onTap: () async {
-                    try {
-                      setState(() {});
-                      await loadedProduct.toggleFavorite(
-                        // auth.token,
-                        auth.userId,
-                      );
-                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: loadedProduct.isFavorite
-                              ? const Text('Товар добален в список желаний')
-                              : const Text('Товар удален из списка желаний'),
-                          duration: const Duration(seconds: 1),
-                        ),
-                      );
-                    } catch (error) {
-                      scaffold.showSnackBar(
-                        SnackBar(
-                          content: Text(error.toString()),
-                          duration: const Duration(seconds: 1),
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ],
               expandedHeight: MediaQuery.of(context).size.height * 0.6,
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
-                centerTitle: true,
-                titlePadding: EdgeInsets.zero,
-                background: Stack(
-                  children: [
-                    PageView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: loadedProduct.imageUrls.length,
-                      itemBuilder: (context, index) => index == 0
-                          ? Hero(
-                              tag: productId,
-                              child: Image.network(
-                                loadedProduct.imageUrls[index],
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                          : FadeInImage(
-                              placeholder: const AssetImage(
-                                  'assets/images/placeholder.jpg'),
-                              image: NetworkImage(
-                                loadedProduct.imageUrls[index],
-                              ),
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                    Container(
-                      height: 70,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          stops: const [
-                            0.0,
-                            1.0,
-                          ],
-                          colors: [
-                            Colors.black.withOpacity(0.5),
-                            Colors.black.withOpacity(0.0),
-                          ],
+                background: PageView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: loadedProduct.imageUrls.length,
+                  itemBuilder: (context, index) => index == 0
+                      ? Hero(
+                          tag: productId,
+                          child: Image.network(
+                            loadedProduct.imageUrls[index],
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : FadeInImage(
+                          placeholder:
+                              const AssetImage('assets/images/placeholder.jpg'),
+                          image: NetworkImage(
+                            loadedProduct.imageUrls[index],
+                          ),
+                          fit: BoxFit.cover,
                         ),
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ),

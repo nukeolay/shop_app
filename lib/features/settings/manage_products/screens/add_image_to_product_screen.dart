@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/notifiers/product.dart';
 
 class AddImageToProductScreen extends StatefulWidget {
   const AddImageToProductScreen({Key? key}) : super(key: key);
@@ -13,7 +14,7 @@ class _AddImageToProductScreenState extends State<AddImageToProductScreen> {
 
   final _form = GlobalKey<FormState>();
   final List<String> _imageUrls = [];
-  late Function _addImageUrls;
+  late final Product _editedProduct;
   final List<TextEditingController> _imageUrlControllers = [];
   final List<FocusNode> _imageUrlFocusNodes = [];
 
@@ -27,8 +28,9 @@ class _AddImageToProductScreenState extends State<AddImageToProductScreen> {
     if (_isInit) {
       List<Object> _modalRouteArguments =
           ModalRoute.of(context)!.settings.arguments as List<Object>;
-      _imageUrls.addAll(_modalRouteArguments[0] as List<String>);
-      _addImageUrls = _modalRouteArguments[1] as Function;
+      _editedProduct = _modalRouteArguments[0] as Product;
+      _imageUrls.addAll(_editedProduct.imageUrls);
+
       _isInit = false;
     }
     if (_imageUrls.isNotEmpty) {
@@ -73,7 +75,8 @@ class _AddImageToProductScreenState extends State<AddImageToProductScreen> {
       final bool _isValid = _form.currentState!.validate();
       if (_isValid) {
         _form.currentState!.save();
-        _addImageUrls(_imageUrls);
+        _editedProduct.imageUrls.clear();
+        _editedProduct.imageUrls.addAll(_imageUrls);
         Navigator.of(context).pop();
       }
     }

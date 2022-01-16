@@ -25,4 +25,12 @@ class Category {
   String toString() {
     return 'id: $id, category: $category, titles: $titles, isCollection: $isCollection, imageUrl: $imageUrl';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Category && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }
